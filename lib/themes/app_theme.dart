@@ -19,17 +19,17 @@ final lightTheme = ThemeData(
       onSurface: lightFontClr),
   textTheme: TextTheme(
     bodyLarge:
-        TextStyle(fontSize: 25.sp, fontWeight: FontWeight.w400, height: 1),
+        TextStyle(fontSize: 23.sp, fontWeight: FontWeight.w400, height: 1),
     bodyMedium:
-        TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w400, height: 1),
+        TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400, height: 1),
     bodySmall:
-        TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w400, height: 1),
+        TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w400, height: 1),
     titleLarge:
-        TextStyle(fontSize: 25.sp, fontWeight: FontWeight.w700, height: 1),
+        TextStyle(fontSize: 23.sp, fontWeight: FontWeight.w700, height: 1),
     titleMedium:
-        TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700, height: 1),
+        TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700, height: 1),
     titleSmall:
-        TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700, height: 1),
+        TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w700, height: 1),
   ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

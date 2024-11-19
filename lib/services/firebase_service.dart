@@ -1,23 +1,53 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer' as developer;
 
 class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /// User Sign In with Email & Password
-  Future<User?> signIn(String email, String password) async {
+  Future<dynamic> logIn({required String email, required String password}) async {
     try {
-      developer.log("SignIn Attempt: Email => $email, Password => [HIDDEN]");
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      developer.log("SignIn Success: User ID => ${userCredential.user?.uid}, "
-          "Email => ${userCredential.user?.email}");
-      return userCredential.user;
+      return {
+        'success': true,
+        'user': userCredential.user,
+      };
     } catch (e) {
-      print("SignIn Error: $e");
-      return null;
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
+  /// Publish Questions to Firestore
+  Future<dynamic> publishQuestions({
+    required String topicName,
+    required int timeDuration,
+    required List<Map<String, dynamic>> questions,
+  }) async {
+    try {
+      final docRef = await _firestore.collection("generalKnowledge").add({
+        'topicName': topicName,
+        'timeDuration': timeDuration,
+        'questions': questions,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      return {
+        'success': true,
+        'docId': docRef.id,
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
     }
   }
 
@@ -31,7 +61,7 @@ class FirebaseService {
     try {
       await _auth.signOut();
     } catch (e) {
-      print("SignOut Error: $e");
+      developer.log("SignOut Error: $e");
     }
   }
 }

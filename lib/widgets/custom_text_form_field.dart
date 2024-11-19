@@ -39,7 +39,7 @@ class CustomTextFormField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText ?? 'writeHere'.tr,
         suffixIcon: suffixIcon,
-        contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+        contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
       ),
     );
   }

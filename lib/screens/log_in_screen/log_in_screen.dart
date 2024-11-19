@@ -4,7 +4,6 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:teacher_panel/routes/app_routes.dart';
 import 'package:teacher_panel/screens/log_in_screen/controllers/log_in_controller.dart';
-import 'package:teacher_panel/screens/log_in_screen/models/log_in_model.dart';
 import 'package:teacher_panel/utils/app_colors.dart';
 import 'package:teacher_panel/utils/app_const_functions.dart';
 import 'package:teacher_panel/utils/app_validators.dart';
@@ -79,10 +78,7 @@ class LogInScreen extends StatelessWidget {
 
   void _formOnSubmit(LogInController controller) async{
    if(controller.formKey.currentState!.validate()){
-     final result = await controller.logInUser(logInData: LogInModel(
-         email: controller.emailController.text,
-         password: controller.passwordController.text
-     ));
+     final result = await controller.logInUser();
      if(result){
        Get.toNamed(AppRoutes.homeScreen);
      }

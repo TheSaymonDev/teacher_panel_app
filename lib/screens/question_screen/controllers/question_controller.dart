@@ -5,24 +5,18 @@ import 'package:teacher_panel/utils/app_const_functions.dart';
 import 'package:teacher_panel/utils/question.dart';
 
 class QuestionController extends GetxController {
-  // Loading state
-  bool isLoading = false;
 
-  // Form key for validation
+  bool isLoading = false;
   final formKey = GlobalKey<FormState>();
 
-  // Controllers for input fields
   final questionController = TextEditingController();
   final List<TextEditingController> optionControllers =
   List.generate(4, (_) => TextEditingController());
 
-  // Questions list to store fetched questions
   final questions = <Question>[];
 
-  // Correct answer index
   int selectedCorrectAns = 0;
 
-  // Update correct answer index
   void updateCorrectAns(int value) {
     selectedCorrectAns = value;
     update(); // Notify UI to update
@@ -56,7 +50,7 @@ class QuestionController extends GetxController {
         AppConstFunctions.customSuccessMessage(message: 'Question added successfully!');
         questions.add(newQuestion); // Update local list
         _clearFormFields();
-        update(); // Notify UI to update
+        update();
       } else {
         AppConstFunctions.customErrorMessage(message: 'Failed to add question.');
       }
@@ -76,9 +70,10 @@ class QuestionController extends GetxController {
 
       await HiveService().updateQuestion(index, updatedQuestion);
       questions[index] = updatedQuestion; // Update local list
+      Get.back();
       AppConstFunctions.customSuccessMessage(message: 'Question updated successfully!');
       _clearFormFields();
-      update(); // Notify UI to update
+      update();
     } catch (error) {
       AppConstFunctions.customErrorMessage(message: error.toString());
     }
@@ -90,13 +85,12 @@ class QuestionController extends GetxController {
       await HiveService().deleteQuestion(index);
       questions.removeAt(index); // Remove from local list
       AppConstFunctions.customSuccessMessage(message: 'Question deleted successfully!');
-      update(); // Notify UI to update
+      update();
     } catch (error) {
       AppConstFunctions.customErrorMessage(message: 'Failed to delete question: $error');
     }
   }
 
-  // Private method to handle loading state
   void _setLoading(bool value) {
     isLoading = value;
     update(); // Notify UI to update
@@ -109,7 +103,7 @@ class QuestionController extends GetxController {
       controller.clear();
     }
     selectedCorrectAns = 0;
-    update(); // Notify UI to update
+    update();
   }
 
   // Fetch questions when the controller is initialized

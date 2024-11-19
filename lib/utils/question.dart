@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-
 part 'question.g.dart'; // To generate Hive TypeAdapter
 
 @HiveType(typeId: 0)

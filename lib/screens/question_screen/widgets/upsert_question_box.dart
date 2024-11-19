@@ -10,29 +10,40 @@ import 'package:teacher_panel/widgets/custom_elevated_btn.dart';
 import 'package:teacher_panel/widgets/custom_outlined_btn.dart';
 import 'package:teacher_panel/widgets/custom_text_form_field.dart';
 
-class AddQuestionBox extends StatelessWidget {
-  AddQuestionBox({super.key});
+class UpsertQuestionBox extends StatelessWidget {
+  final bool isUpdate;
+  final int? questionIndex;
 
-  final _addQuestionController = Get.find<QuestionController>();
+  UpsertQuestionBox({super.key, this.isUpdate = false, this.questionIndex});
+
+  final _upsertQuestionController = Get.find<QuestionController>();
 
   @override
   Widget build(BuildContext context) {
+    if (isUpdate && questionIndex != null) {
+      final question = _upsertQuestionController.questions[questionIndex!];
+      _upsertQuestionController.questionController.text = question.questionText;
+      for (int i = 0; i < 4; i++) {
+        _upsertQuestionController.optionControllers[i].text = question.options[i];
+      }
+      _upsertQuestionController.selectedCorrectAns = question.correctAnswer;
+    }
     return Container(
       width: double.infinity.w,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 32.h),
       child: SingleChildScrollView(
         child: Form(
-          key: _addQuestionController.formKey,
+          key: _upsertQuestionController.formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Add Question",
+                isUpdate ? "Update Question" : "Add Question",
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               Gap(20.h),
               CustomTextFormField(
-                controller: _addQuestionController.questionController,
+                controller: _upsertQuestionController.questionController,
                 hintText: 'Question',
                 maxLines: 3,
                 validator: AppValidators.requiredValidator,
@@ -43,13 +54,14 @@ class AddQuestionBox extends StatelessWidget {
                 children: List.generate(
                   4,
                   (index) => CustomTextFormField(
-                    controller: _addQuestionController.optionControllers[index],
+                    controller: _upsertQuestionController.optionControllers[index],
                     hintText: 'Option ${index + 1}',
                     validator: AppValidators.requiredValidator,
                   ),
                 ),
               ),
               Gap(16.h),
+              // Correct answer choosing part (same as before)
               Container(
                 height: 80.h,
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
@@ -120,7 +132,7 @@ class AddQuestionBox extends StatelessWidget {
                                     onPressed: () {
                                       _formOnSubmit(controller);
                                     },
-                                    name: 'SAVE'))
+                                    name: isUpdate ? 'UPDATE' : 'SAVE'))
                           ],
                         )),
             ],
@@ -132,7 +144,11 @@ class AddQuestionBox extends StatelessWidget {
 
   void _formOnSubmit(QuestionController controller) async {
     if (controller.formKey.currentState!.validate()) {
-      await controller.addQuestionToLocalDb();
+      if (isUpdate && questionIndex != null) {
+        await controller.updateQuestionByIndex(questionIndex!);
+      } else {
+        await controller.addQuestionToLocalDb();
+      }
     }
   }
 }
