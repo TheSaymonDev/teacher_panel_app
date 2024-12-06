@@ -23,7 +23,7 @@ class CustomOutlinedBtn extends StatelessWidget {
       height: height ?? 50.h,
       child: OutlinedButton(
           style: OutlinedButton.styleFrom(
-              side: BorderSide(color: secondaryClr, width: 2.w),
+              side: BorderSide(color: AppColors.secondaryClr, width: 2.w),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.r))),
           onPressed: onPressed,
@@ -31,7 +31,7 @@ class CustomOutlinedBtn extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .titleMedium!
-                  .copyWith(color: secondaryClr))),
+                  .copyWith(color: AppColors.secondaryClr))),
     );
   }
 }

@@ -36,7 +36,7 @@ class LogInScreen extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall!
-                        .copyWith(color: secondaryClr)),
+                        .copyWith(color: AppColors.secondaryClr)),
                 Gap(48.h),
                 CustomTextFormField(
                     controller: _logInController.emailController,
@@ -57,7 +57,7 @@ class LogInScreen extends StatelessWidget {
                               controller.isObscure
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: Colors.grey)));
+                              color: context.isDarkMode? AppColors.lightGreyClr: AppColors.darkGreyClr)));
                 }),
                 Gap(32.h),
                 GetBuilder<LogInController>(

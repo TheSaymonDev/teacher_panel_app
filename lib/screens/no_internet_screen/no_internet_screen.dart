@@ -25,7 +25,7 @@ class NoInternetScreen extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .titleLarge!
-                  .copyWith(fontSize: 35.sp, color: secondaryClr),
+                  .copyWith(fontSize: 35.sp, color: AppColors.secondaryClr),
             ),
             Gap(16.h),
             Text(

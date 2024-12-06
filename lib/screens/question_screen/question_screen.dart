@@ -9,7 +9,7 @@ import 'package:teacher_panel/screens/question_screen/widgets/upsert_question_bo
 import 'package:teacher_panel/utils/app_colors.dart';
 import 'package:teacher_panel/utils/app_const_functions.dart';
 import 'package:teacher_panel/utils/app_validators.dart';
-import 'package:teacher_panel/widgets/custom_app_bar.dart';
+import 'package:teacher_panel/widgets/custom_app_bar_with_title.dart';
 import 'package:teacher_panel/widgets/custom_elevated_btn.dart';
 import 'package:teacher_panel/widgets/custom_text_form_field.dart';
 
@@ -21,7 +21,7 @@ class QuestionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: CustomAppBarWithTitle(
           onPressed: () {
             Get.back();
           },
@@ -39,7 +39,7 @@ class QuestionScreen extends StatelessWidget {
                 width: double.infinity.w,
                 padding: EdgeInsets.symmetric(vertical: 16.h),
                 decoration: BoxDecoration(
-                  border: Border.all(color: primaryClr, width: 2.w),
+                  border: Border.all(color: AppColors.primaryClr, width: 2.w),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Form(
@@ -111,7 +111,7 @@ class QuestionScreen extends StatelessWidget {
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge!
-                                  .copyWith(color: secondaryClr)));
+                                  .copyWith(color: AppColors.secondaryClr)));
                     }
                     return ListView.separated(
                       shrinkWrap: true,
@@ -126,7 +126,7 @@ class QuestionScreen extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                               horizontal: 12.w, vertical: 8.h),
                           decoration: BoxDecoration(
-                            border: Border.all(color: primaryClr, width: 2.w),
+                            border: Border.all(color: AppColors.primaryClr, width: 2.w),
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: Column(
@@ -182,7 +182,7 @@ class QuestionScreen extends StatelessWidget {
                                             child: Row(
                                               children: [
                                                 Icon(Icons.edit,
-                                                    color: primaryClr,
+                                                    color: AppColors.primaryClr,
                                                     size: 20.sp),
                                                 Gap(6.w),
                                                 Text('Update',
@@ -198,7 +198,7 @@ class QuestionScreen extends StatelessWidget {
                                             child: Row(
                                               children: [
                                                 Icon(Icons.delete,
-                                                    color: secondaryClr,
+                                                    color: AppColors.secondaryClr,
                                                     size: 20.sp),
                                                 Gap(6.w),
                                                 Text('Delete',
@@ -228,7 +228,7 @@ class QuestionScreen extends StatelessWidget {
                                                   color:
                                                       question.correctAnswer ==
                                                               0
-                                                          ? greenClr
+                                                          ? AppColors.greenClr
                                                           : null))),
                                   Expanded(
                                       child: Text('খ। ${question.options[1]}',
@@ -239,7 +239,7 @@ class QuestionScreen extends StatelessWidget {
                                                   color:
                                                       question.correctAnswer ==
                                                               1
-                                                          ? greenClr
+                                                          ? AppColors.greenClr
                                                           : null))),
                                 ],
                               ),
@@ -254,7 +254,7 @@ class QuestionScreen extends StatelessWidget {
                                                   color:
                                                       question.correctAnswer ==
                                                               2
-                                                          ? greenClr
+                                                          ? AppColors.greenClr
                                                           : null))),
                                   Expanded(
                                       child: Text('ঘ। ${question.options[3]}',
@@ -265,7 +265,7 @@ class QuestionScreen extends StatelessWidget {
                                                   color:
                                                       question.correctAnswer ==
                                                               3
-                                                          ? greenClr
+                                                          ? AppColors.greenClr
                                                           : null))),
                                 ],
                               ),

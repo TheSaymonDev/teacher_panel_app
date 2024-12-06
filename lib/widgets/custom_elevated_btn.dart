@@ -23,8 +23,8 @@ class CustomElevatedBtn extends StatelessWidget {
       height: height ?? 50.h,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            backgroundColor: primaryClr,
-            foregroundColor: lightBgClr,
+            backgroundColor: AppColors.primaryClr,
+            foregroundColor: AppColors.lightBgClr,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r)),
             padding: EdgeInsets.zero),

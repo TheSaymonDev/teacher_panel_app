@@ -67,7 +67,7 @@ class UpsertQuestionBox extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: primaryClr, width: 2.w),
+                  border: Border.all(color: AppColors.primaryClr, width: 2.w),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
