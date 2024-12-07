@@ -4,11 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:teacher_panel/routes/app_routes.dart';
-import 'package:teacher_panel/screens/class_details_screen/class_details_screen.dart';
+import 'package:teacher_panel/screens/home_screen/controllers/read_classes_controller.dart';
 import 'package:teacher_panel/screens/home_screen/widgets/home_end_drawer.dart';
 import 'package:teacher_panel/screens/home_screen/widgets/quick_action_card.dart';
 import 'package:teacher_panel/screens/home_screen/widgets/state_card.dart';
 import 'package:teacher_panel/utils/app_colors.dart';
+import 'package:teacher_panel/utils/app_const_functions.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -71,7 +72,7 @@ class HomeScreen extends StatelessWidget {
               Text('Your Classes',
                   style: Theme.of(context).textTheme.titleMedium),
               Gap(8.h),
-              _buildClassList(),
+              _buildClassList(context),
               Gap(16.h),
               Text('Quick Actions',
                   style: Theme.of(context).textTheme.titleMedium),
@@ -119,42 +120,47 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildClassList() {
-    final classes = [
-      {'name': 'Class 1', 'subjects': '5 Subjects'},
-      {'name': 'Class 2', 'subjects': '3 Subjects'},
-    ];
-
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: classes.length,
-      itemBuilder: (context, index) {
-        final classItem = classes[index];
-        return ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 0.h),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              side: BorderSide(
-                  width: 1.5,
-                  color: context.isDarkMode
-                      ? AppColors.lightGreyClr
-                      : AppColors.darkGreyClr)),
-          title: Text(classItem['name']!,
-              style: Theme.of(context).textTheme.bodyMedium),
-          subtitle: Text(classItem['subjects']!,
-              style: Theme.of(context).textTheme.titleSmall),
-          trailing: Icon(
-            Icons.arrow_forward,
-            size: 20.sp,
-          ),
-          onTap: () {
-            // Navigate to class details
-            Get.to(ClassDetailsScreen());
-          },
-        );
-      },
-      separatorBuilder: (context, index) => Gap(8.h),
-    );
+  Widget _buildClassList(BuildContext context) {
+    return GetBuilder<ReadClassesController>(
+        builder: (controller) => controller.isLoading
+            ? AppConstFunctions.customCircularProgressIndicator
+            : controller.classes.isEmpty
+                ? Center(
+                    child: Text('No Class Added',
+                        style: Theme.of(context).textTheme.bodyMedium),
+                  )
+                : ListView.separated(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: controller.classes.length,
+                    itemBuilder: (context, index) {
+                      final classItem = controller.classes[index];
+                      return ListTile(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 24.w, vertical: 0.h),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            side: BorderSide(
+                                width: 1.5,
+                                color: context.isDarkMode
+                                    ? AppColors.lightGreyClr
+                                    : AppColors.darkGreyClr)),
+                        title: Text(classItem.className!,
+                            style: Theme.of(context).textTheme.bodyMedium),
+                        subtitle: Text('${classItem.subjects!.length} Subjects',
+                            style: Theme.of(context).textTheme.titleSmall),
+                        trailing: Icon(
+                          Icons.arrow_forward,
+                          size: 20.sp,
+                        ),
+                        onTap: () {
+                         Get.toNamed(AppRoutes.classDetailsScreen, arguments: {
+                           'classData': classItem
+                         });
+                        },
+                      );
+                    },
+                    separatorBuilder: (context, index) => Gap(8.h),
+                  ));
   }
 }

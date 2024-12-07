@@ -7,7 +7,8 @@ class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /// User Sign In with Email & Password
-  Future<dynamic> logIn({required String email, required String password}) async {
+  Future<dynamic> logIn(
+      {required String email, required String password}) async {
     try {
       final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -18,6 +19,23 @@ class FirebaseService {
         'user': userCredential.user,
       };
     } catch (e) {
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
+  /// Fetch Classes From Firestore Firebase
+  Future<dynamic> readClasses ({required String collectionName})async{
+    try{
+      final querySnapshot = await  _firestore
+          .collection(collectionName).get();
+      return {
+        'success': true,
+        'querySnapshot': querySnapshot,
+      };
+    }catch (e) {
       return {
         'success': false,
         'message': e.toString(),
@@ -39,6 +57,32 @@ class FirebaseService {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
+      return {
+        'success': true,
+        'docId': docRef.id,
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
+  Future<dynamic> createClass({
+    required String className,
+    String? classCode,
+    required String numOfStudents,
+    required List<String> subjects,
+  }) async {
+    try {
+      final docRef = await _firestore.collection("classes").add({
+        'className': className,
+        'classCode': classCode,
+        'numOfStudents': numOfStudents,
+        'subjects': subjects,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
       return {
         'success': true,
         'docId': docRef.id,

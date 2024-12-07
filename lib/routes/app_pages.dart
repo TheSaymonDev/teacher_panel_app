@@ -2,7 +2,9 @@ import 'package:get/get.dart';
 import 'package:teacher_panel/routes/app_routes.dart';
 import 'package:teacher_panel/screens/add_class_screen/add_class_screen.dart';
 import 'package:teacher_panel/screens/add_class_screen/bindings/add_class_binding.dart';
+import 'package:teacher_panel/screens/class_details_screen/bindings/class_details_binding.dart';
 import 'package:teacher_panel/screens/class_details_screen/class_details_screen.dart';
+import 'package:teacher_panel/screens/home_screen/bindings/home_binding.dart';
 import 'package:teacher_panel/screens/home_screen/home_screen.dart';
 import 'package:teacher_panel/screens/log_in_screen/bindings/log_in_binding.dart';
 import 'package:teacher_panel/screens/log_in_screen/log_in_screen.dart';
@@ -22,9 +24,14 @@ class AppPages {
         name: AppRoutes.logInScreen,
         page: () => LogInScreen(),
         binding: LogInBinding()),
-    GetPage(name: AppRoutes.homeScreen, page: () => HomeScreen()),
     GetPage(
-        name: AppRoutes.classDetailsScreen, page: () => ClassDetailsScreen()),
+        name: AppRoutes.homeScreen,
+        page: () => HomeScreen(),
+        binding: HomeBinding()),
+    GetPage(
+        name: AppRoutes.classDetailsScreen,
+        page: () => ClassDetailsScreen(),
+        binding: ClassDetailsBinding()),
     GetPage(
         name: AppRoutes.addClassScreen,
         page: () => AddClassScreen(),

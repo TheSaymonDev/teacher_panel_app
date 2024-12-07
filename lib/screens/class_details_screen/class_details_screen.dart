@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:teacher_panel/screens/class_details_screen/controllers/class_details_controller.dart';
 import 'package:teacher_panel/screens/class_report_and_analytics_screen/class_report_and_analytics_screen.dart';
 import 'package:teacher_panel/screens/student_details_screen/student_details_screen.dart';
 import 'package:teacher_panel/screens/subject_details_screen/subject_details_screen.dart';
@@ -9,7 +10,9 @@ import 'package:teacher_panel/utils/app_colors.dart';
 import 'package:teacher_panel/widgets/custom_app_bar_with_title.dart';
 
 class ClassDetailsScreen extends StatelessWidget {
-  const ClassDetailsScreen({super.key});
+  ClassDetailsScreen({super.key});
+
+  final _classDetailsController = Get.find<ClassDetailsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +102,7 @@ class ClassDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Class 6',
+                  Text(_classDetailsController.classData.className!,
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge!
@@ -109,7 +112,8 @@ class ClassDetailsScreen extends StatelessWidget {
                     children: [
                       Icon(Icons.book, size: 20.sp, color: Colors.white),
                       Gap(8.w),
-                      Text('Subjects: 5',
+                      Text(
+                          'Subjects: ${_classDetailsController.classData.subjects!.length}',
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium!
@@ -121,7 +125,8 @@ class ClassDetailsScreen extends StatelessWidget {
                     children: [
                       Icon(Icons.group, size: 20.sp, color: Colors.white),
                       Gap(8.w),
-                      Text('Students: 30',
+                      Text(
+                          'Students: ${_classDetailsController.classData.numOfStudents}',
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium!
@@ -133,7 +138,8 @@ class ClassDetailsScreen extends StatelessWidget {
                     children: [
                       Icon(Icons.qr_code, size: 20.sp, color: Colors.white),
                       Gap(8.w),
-                      Text('Class ID: CL6-12345',
+                      Text(
+                          'Class Code: ${_classDetailsController.classData.classCode ?? ''}',
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium!
@@ -150,18 +156,12 @@ class ClassDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildSubjectsList(BuildContext context) {
-    final subjects = [
-      {'name': 'Mathematics', 'status': 'Active'},
-      {'name': 'Science', 'status': 'Active'},
-      {'name': 'History', 'status': 'Inactive'},
-    ];
-
     return ListView.separated(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: subjects.length,
+      itemCount: _classDetailsController.classData.subjects!.length,
       itemBuilder: (context, index) {
-        final subject = subjects[index];
+        final subject = _classDetailsController.classData.subjects![index];
         return ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 0.h),
           shape: RoundedRectangleBorder(
@@ -171,9 +171,8 @@ class ClassDetailsScreen extends StatelessWidget {
                   color: context.isDarkMode
                       ? AppColors.lightGreyClr
                       : AppColors.darkGreyClr)),
-          title: Text(subject['name']!,
-              style: Theme.of(context).textTheme.bodyMedium),
-          subtitle: Text('Status: ${subject['status']}',
+          title: Text(subject, style: Theme.of(context).textTheme.bodyMedium),
+          subtitle: Text('Status: Active',
               style: Theme.of(context).textTheme.titleSmall),
           trailing: Icon(
             Icons.arrow_forward,
