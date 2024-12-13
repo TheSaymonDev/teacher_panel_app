@@ -5,7 +5,6 @@ class ClassModel {
   String? className;
   String? classCode;
   String? numOfStudents;
-  List<String>? subjects;
   Timestamp? createdAt;
 
   ClassModel(
@@ -13,15 +12,13 @@ class ClassModel {
         this.className,
         this.classCode,
         this.numOfStudents,
-        this.subjects,
         this.createdAt});
 
-  ClassModel.fromFireStore(Map<String, dynamic> json, id) {
-    id = json['id'];
+  ClassModel.fromFireStore(Map<String, dynamic> json, String docId) {
+    id = docId;
     className = json['className'];
     classCode = json['classCode'];
     numOfStudents = json['numOfStudents'];
-    subjects = json['subjects'].cast<String>();
     createdAt = json['createdAt'];
   }
 
@@ -31,7 +28,6 @@ class ClassModel {
     data['className'] = className;
     data['classCode'] = classCode;
     data['numOfStudents'] = numOfStudents;
-    data['subjects'] = subjects;
     data['createdAt'] = createdAt;
     return data;
   }

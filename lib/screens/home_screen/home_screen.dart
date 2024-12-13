@@ -4,12 +4,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:teacher_panel/routes/app_routes.dart';
-import 'package:teacher_panel/screens/home_screen/controllers/read_classes_controller.dart';
+import 'package:teacher_panel/screens/home_screen/controllers/manage_class_controller.dart';
 import 'package:teacher_panel/screens/home_screen/widgets/home_end_drawer.dart';
 import 'package:teacher_panel/screens/home_screen/widgets/quick_action_card.dart';
 import 'package:teacher_panel/screens/home_screen/widgets/state_card.dart';
+import 'package:teacher_panel/screens/home_screen/widgets/upsert_class_box.dart';
 import 'package:teacher_panel/utils/app_colors.dart';
 import 'package:teacher_panel/utils/app_const_functions.dart';
+import 'package:teacher_panel/widgets/custom_empty_widget.dart';
+import 'package:teacher_panel/widgets/custom_gradient_container.dart';
+import 'package:teacher_panel/widgets/custom_list_tile.dart';
+import 'package:teacher_panel/widgets/custom_pop_up_menu.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -26,26 +31,14 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Gap(16.h),
-              Container(
-                width: double.infinity.w,
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: context.isDarkMode
-                        ? [AppColors.primaryClr, AppColors.secondaryClr]
-                        : [Colors.lightBlueAccent, Colors.greenAccent],
-                  ),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  'Welcome, John Doe!',
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ),
+              CustomGradientContainer(
+                  child: Text(
+                'Welcome, John Doe!',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall!
+                    .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+              )),
               Gap(16.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -82,15 +75,11 @@ class HomeScreen extends StatelessWidget {
                 spacing: 8.w,
                 children: [
                   QuickActionCard(
-                      onTap: () {
-                        Get.toNamed(AppRoutes.addClassScreen);
-                      },
-                      title: 'Add Class',
+                      onTap: () => _showUpsertClassBox(context),
+                      title: 'Create Class',
                       iconData: Icons.add),
                   QuickActionCard(
-                      onTap: () {
-                        Get.toNamed(AppRoutes.viewReportsScreen);
-                      },
+                      onTap: () => Get.toNamed(AppRoutes.viewReportsScreen),
                       title: 'View Reports',
                       iconData: Icons.pie_chart),
                 ],
@@ -121,46 +110,88 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildClassList(BuildContext context) {
-    return GetBuilder<ReadClassesController>(
-        builder: (controller) => controller.isLoading
-            ? AppConstFunctions.customCircularProgressIndicator
-            : controller.classes.isEmpty
-                ? Center(
-                    child: Text('No Class Added',
-                        style: Theme.of(context).textTheme.bodyMedium),
-                  )
-                : ListView.separated(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: controller.classes.length,
-                    itemBuilder: (context, index) {
-                      final classItem = controller.classes[index];
-                      return ListTile(
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 24.w, vertical: 0.h),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                            side: BorderSide(
-                                width: 1.5,
-                                color: context.isDarkMode
-                                    ? AppColors.lightGreyClr
-                                    : AppColors.darkGreyClr)),
-                        title: Text(classItem.className!,
-                            style: Theme.of(context).textTheme.bodyMedium),
-                        subtitle: Text('${classItem.subjects!.length} Subjects',
-                            style: Theme.of(context).textTheme.titleSmall),
-                        trailing: Icon(
-                          Icons.arrow_forward,
-                          size: 20.sp,
-                        ),
-                        onTap: () {
-                         Get.toNamed(AppRoutes.classDetailsScreen, arguments: {
-                           'classData': classItem
-                         });
-                        },
-                      );
-                    },
-                    separatorBuilder: (context, index) => Gap(8.h),
-                  ));
+    return GetBuilder<ManageClassController>(
+      builder: (controller) => controller.isLoading
+          ? AppConstFunctions.customCircularProgressIndicator
+          : controller.classes.isEmpty
+              ? CustomEmptyWidget(title: 'No class added!')
+              : ListView.separated(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: controller.classes.length,
+                  itemBuilder: (context, index) {
+                    final classItem = controller.classes[index];
+                    return CustomListTile(
+                      onTap: () => Get.toNamed(
+                        AppRoutes.classDetailsScreen,
+                        arguments: {'classData': classItem},
+                      ),
+                      title: classItem.className ?? '',
+                      subTitle: 'Total Student: ${classItem.numOfStudents}',
+                      trailing: CustomPopUpMenu(
+                        onUpdate: () => _showUpsertClassBox(context, classItem),
+                        onDelete: () => _showClassDeleteConfirmationDialog(
+                            context, classItem.id!),
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) => Gap(8.h),
+                ),
+    );
+  }
+
+  /// Shows a modal bottom sheet for adding or updating a class.
+  void _showUpsertClassBox(BuildContext context, [dynamic classItem]) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
+      ),
+      builder: (context) => UpsertClassBox(
+        isUpdate: classItem != null,
+        classData: classItem,
+      ),
+    );
+  }
+
+
+  void _showClassDeleteConfirmationDialog(
+      BuildContext context, String classId) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text('Confirm Delete',
+                  style: Theme.of(context).textTheme.titleMedium),
+              content: Text('Are you sure you want to delete this class?',
+                  style: Theme.of(context).textTheme.bodyMedium),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final result = await Get.find<ManageClassController>()
+                        .deleteClassById(classId: classId);
+                    if (result && context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondaryClr),
+                  child: Text('Delete',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Colors.white)),
+                ),
+              ],
+            ));
   }
 }

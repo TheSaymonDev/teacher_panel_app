@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class StudentDetailsScreen extends StatelessWidget {
   final Map<String, String> student;
 
-  StudentDetailsScreen({required this.student});
+  const StudentDetailsScreen({super.key, required this.student});
 
   @override
   Widget build(BuildContext context) {

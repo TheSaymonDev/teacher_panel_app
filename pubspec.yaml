@@ -45,8 +45,8 @@ dependencies:
   internet_connection_checker_plus: ^2.5.2
   hive:
   hive_flutter:
-  flutter_switch: ^0.3.2
   animated_toggle_switch: ^0.8.3
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:

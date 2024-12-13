@@ -1,29 +1,34 @@
 import 'package:get/get.dart';
 import 'package:teacher_panel/screens/class_details_screen/models/subject_model.dart';
 import 'package:teacher_panel/screens/home_screen/models/class_model.dart';
+import 'package:teacher_panel/screens/subject_details_screen/models/quiz_model.dart';
 import 'package:teacher_panel/services/firebase_service.dart';
 import 'package:teacher_panel/utils/app_const_functions.dart';
 
-class ClassDetailsController extends GetxController {
+class SubjectDetailsController extends GetxController {
   late ClassModel classData;
+  late SubjectModel subjectData;
   late String classId;
+  late String subjectId;
   bool isLoading = false;
-  List<SubjectModel> subjects = [];
+  List<QuizModel> quizzes = [];
 
-  Future<bool> _readSubjects({required String classId}) async {
+  Future<bool> _readQuizzes(
+      {required String classId, required String subjectId}) async {
     _setLoading(true);
-    final response = await FirebaseService().readSubjects(classId: classId);
+    final response = await FirebaseService()
+        .readQuizzes(classId: classId, subjectId: subjectId);
     _setLoading(false);
     if (response['success'] == true) {
       final querySnapshot = response['querySnapshot'];
       if (querySnapshot.docs.isNotEmpty) {
-        subjects = querySnapshot.docs.map<SubjectModel>((doc) {
-          return SubjectModel.fromFireStore(doc.data(), doc.id);
+        quizzes = querySnapshot.docs.map<QuizModel>((doc) {
+          return QuizModel.fromFireStore(doc.data(), doc.id);
         }).toList();
         return true;
       } else {
-        subjects = [];
-        AppConstFunctions.customErrorMessage(message: 'No subject found.');
+        quizzes = [];
+        AppConstFunctions.customErrorMessage(message: 'No quiz found.');
         return false;
       }
     } else {
@@ -33,14 +38,16 @@ class ClassDetailsController extends GetxController {
     }
   }
 
-  Future<bool> deleteSubjectById(
-      {required String classId, required String subjectId}) async {
+  Future<bool> deleteQuizById(
+      {required String classId,
+      required String subjectId,
+      required String quizId}) async {
     final response = await FirebaseService()
-        .deleteSubject(classId: classId, subjectId: subjectId);
+        .deleteQuiz(classId: classId, subjectId: subjectId, quizId: quizId);
     if (response['success'] == true) {
       AppConstFunctions.customSuccessMessage(
-          message: 'Successfully Subject Deleted');
-      _readSubjects(classId: classId);
+          message: 'Successfully Quiz Deleted');
+      _readQuizzes(classId: classId, subjectId: subjectId);
       return true;
     } else {
       AppConstFunctions.customErrorMessage(
@@ -54,15 +61,17 @@ class ClassDetailsController extends GetxController {
     update();
   }
 
-  void refreshSubjects() {
-    _readSubjects(classId: classId);
+  void refreshQuizzes() {
+    _readQuizzes(classId: classId, subjectId: subjectId);
   }
 
   @override
   void onInit() {
     super.onInit();
     classData = Get.arguments['classData'] as ClassModel;
+    subjectData = Get.arguments['subjectData'] as SubjectModel;
     classId = classData.id!;
-    _readSubjects(classId: classId);
+    subjectId = subjectData.id!;
+    _readQuizzes(classId: classId, subjectId: subjectId);
   }
 }

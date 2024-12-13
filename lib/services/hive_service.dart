@@ -14,7 +14,7 @@ class HiveService {
     print('Box "$_boxName" is open: ${_questionBox.isOpen}');
   }
 
-  // Add a question
+  /// Add a question
   Future<int?> addQuestion(Question question) async {
     try {
       if (!_questionBox.isOpen) {
@@ -28,23 +28,29 @@ class HiveService {
   }
 
 
-  // Get all questions
+  /// Get all questions
   List<Question> getQuestions() {
     return _questionBox.values.toList();
   }
 
-  // Get question by index
+  /// Get question by index
   Question getQuestion(int index) {
     return _questionBox.getAt(index)!;
   }
 
-  // Update question
+  /// Update question
   Future<void> updateQuestion(int index, Question updatedQuestion) async {
     await _questionBox.putAt(index, updatedQuestion);
   }
 
-  // Delete question
+  /// Delete question
   Future<void> deleteQuestion(int index) async {
     await _questionBox.deleteAt(index);
   }
+
+  /// Clear all data
+  Future<void> clearAllData() async {
+    await _questionBox.clear();
+  }
+
 }

@@ -106,10 +106,4 @@ class QuestionController extends GetxController {
     update();
   }
 
-  // Fetch questions when the controller is initialized
-  @override
-  void onInit() {
-    super.onInit();
-    getQuestionsFromLocalDb();
-  }
 }

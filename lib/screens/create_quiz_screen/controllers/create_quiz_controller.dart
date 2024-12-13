@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:teacher_panel/screens/subject_details_screen/controllers/subject_details_controller.dart';
 import 'package:teacher_panel/services/firebase_service.dart';
 import 'package:teacher_panel/services/hive_service.dart';
 import 'package:teacher_panel/utils/app_const_functions.dart';
 
-class FirebaseQuestionController extends GetxController {
+class CreateQuizController extends GetxController {
   bool isLoading = false;
 
   final formKey = GlobalKey<FormState>();
@@ -16,20 +17,20 @@ class FirebaseQuestionController extends GetxController {
     update();
   }
 
-  /// Publish Questions to Firebase
-  Future<bool> publishQuestionToFirebase() async {
-    _setLoading(true);
-
+  Future<bool> createQuiz() async {
     final questions = HiveService().getQuestions();
 
-    if (questions.length < 5) {
+    if (topicNameController.text.isEmpty) {
+      AppConstFunctions.customErrorMessage(
+          message: 'Topic name cannot be empty.');
+      return false;
+    }
+    if (topicNameController.text.isNotEmpty && questions.length < 5) {
       AppConstFunctions.customErrorMessage(
           message: 'Minimum 5 questions are required to publish.');
-      _setLoading(false);
       return false;
     }
 
-    // Map questions to Firebase format
     final formattedQuestions = questions.map((question) {
       return {
         'questionText': question.questionText,
@@ -38,26 +39,24 @@ class FirebaseQuestionController extends GetxController {
       };
     }).toList();
 
-    final response = await FirebaseService().publishQuestions(
-      topicName: topicNameController.text,
-      timeDuration: selectedDuration,
-      questions: formattedQuestions,
-    );
+    final subjectDetailsController = Get.find<SubjectDetailsController>();
 
-    _setLoading(false);
+    final response = await FirebaseService().createQuiz(
+        classId: subjectDetailsController.classId,
+        subjectId: subjectDetailsController.subjectId,
+        topicName: topicNameController.text,
+        timeDuration: selectedDuration.toString(),
+        questions: formattedQuestions);
 
     if (response['success'] == true) {
-      AppConstFunctions.customSuccessMessage(message: 'Successfully Published');
+      AppConstFunctions.customSuccessMessage(
+          message: 'Successfully Quiz Published');
+      Get.find<SubjectDetailsController>().refreshQuizzes();
       return true;
     } else {
       AppConstFunctions.customErrorMessage(
           message: response['message'] ?? 'Something went wrong');
       return false;
     }
-  }
-
-  void _setLoading(bool value) {
-    isLoading = value;
-    update();
   }
 }
