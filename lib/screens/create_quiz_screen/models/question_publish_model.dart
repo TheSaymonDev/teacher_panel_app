@@ -1,13 +1,15 @@
 class QuestionPublishModel {
   String? topicName;
   int? timeDuration;
+  String? endTime;
   List<Questions>? questions;
 
-  QuestionPublishModel({this.topicName, this.timeDuration, this.questions});
+  QuestionPublishModel({this.topicName, this.timeDuration, this.endTime, this.questions});
 
   QuestionPublishModel.fromJson(Map<String, dynamic> json) {
     topicName = json['topicName'];
     timeDuration = json['timeDuration'];
+    endTime = json['endTime'];
     if (json['questions'] != null) {
       questions = <Questions>[];
       json['questions'].forEach((v) {
@@ -20,6 +22,7 @@ class QuestionPublishModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['topicName'] = topicName;
     data['timeDuration'] = timeDuration;
+    data['endTime'] = endTime;
     if (questions != null) {
       data['questions'] = questions!.map((v) => v.toJson()).toList();
     }

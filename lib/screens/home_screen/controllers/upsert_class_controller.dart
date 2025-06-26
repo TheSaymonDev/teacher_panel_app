@@ -8,20 +8,17 @@ class UpsertClassController extends GetxController {
   bool isLoading = false;
   final formKey = GlobalKey<FormState>();
   final classNameController = TextEditingController();
-  final classCodeController = TextEditingController();
   final numOfStudentsController = TextEditingController();
 
   Future<bool> createClass() async {
     _setLoading(true);
     final response = await FirebaseService().createClass(
       className: classNameController.text,
-      classCode: classCodeController.text,
       numOfStudents: numOfStudentsController.text,
     );
     _setLoading(false);
     if (response['success'] == true) {
-      AppConstFunctions.customSuccessMessage(
-          message: 'Successfully Class Created');
+      AppConstFunctions.customSuccessMessage(message: response['message']);
       _clearAllFields();
       Get.find<ManageClassController>().refreshClass();
       return true;
@@ -35,14 +32,13 @@ class UpsertClassController extends GetxController {
   Future<bool> updateClass({required String classId}) async {
     _setLoading(true);
     final response = await FirebaseService().updateClass(
-        classId: classId,
-        className: classNameController.text,
-        classCode: classCodeController.text,
-        numOfStudents: numOfStudentsController.text);
+      classId: classId,
+      className: classNameController.text,
+      numOfStudents: numOfStudentsController.text,
+    );
     _setLoading(false);
     if (response['success'] == true) {
-      AppConstFunctions.customSuccessMessage(
-          message: 'Successfully Class Updated');
+      AppConstFunctions.customSuccessMessage(message: response['message']);
       _clearAllFields();
       Get.find<ManageClassController>().refreshClass();
       return true;
@@ -55,7 +51,6 @@ class UpsertClassController extends GetxController {
 
   void _clearAllFields() {
     classNameController.clear();
-    classCodeController.clear();
     numOfStudentsController.clear();
   }
 

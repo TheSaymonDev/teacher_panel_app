@@ -57,6 +57,7 @@ class LogInScreen extends StatelessWidget {
                               controller.isObscure
                                   ? Icons.visibility_off
                                   : Icons.visibility,
+                              size: 20.sp,
                               color: context.isDarkMode? AppColors.lightGreyClr: AppColors.darkGreyClr)));
                 }),
                 Gap(32.h),

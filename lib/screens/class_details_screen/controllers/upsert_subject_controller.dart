@@ -11,15 +11,11 @@ class UpsertSubjectController extends GetxController {
 
   Future<bool> createSubject({required String classId}) async {
     _setLoading(true);
-
     final response = await FirebaseService().createSubject(
         classId: classId, subjectName: subjectNameController.text);
-
     _setLoading(false);
-
     if (response['success'] == true) {
-      AppConstFunctions.customSuccessMessage(
-          message: 'Successfully Subject Created');
+      AppConstFunctions.customSuccessMessage(message: response['message']);
       _clearAllFields();
       Get.find<ClassDetailsController>().refreshSubjects();
       return true;
@@ -30,20 +26,19 @@ class UpsertSubjectController extends GetxController {
     }
   }
 
-  Future<bool> updateSubject(
-      {required String classId, required String subjectId}) async {
+  Future<bool> updateSubject({
+    required String classId,
+    required String subjectId,
+  }) async {
     _setLoading(true);
-
     final response = await FirebaseService().updateSubject(
-        classId: classId,
-        subjectId: subjectId,
-        subjectName: subjectNameController.text);
-
+      classId: classId,
+      subjectId: subjectId,
+      subjectName: subjectNameController.text,
+    );
     _setLoading(false);
-
     if (response['success'] == true) {
-      AppConstFunctions.customSuccessMessage(
-          message: 'Successfully Subject Updated');
+      AppConstFunctions.customSuccessMessage(message: response['message']);
       _clearAllFields();
       Get.find<ClassDetailsController>().refreshSubjects();
       return true;

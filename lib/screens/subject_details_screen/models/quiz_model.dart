@@ -6,8 +6,9 @@ class QuizModel {
   String? timeDuration;
   List<Questions>? questions;
   Timestamp? createdAt;
+  String? subjectName;
 
-  QuizModel({this.id, this.topicName, this.timeDuration, this.questions, this.createdAt});
+  QuizModel({this.id, this.topicName, this.timeDuration, this.questions, this.createdAt, this.subjectName});
 
   QuizModel.fromFireStore(Map<String, dynamic> json, String docId) {
     id = docId;
@@ -20,6 +21,7 @@ class QuizModel {
       });
     }
     createdAt = json['createdAt'];
+    subjectName = json['subjectName'];
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +33,7 @@ class QuizModel {
       data['questions'] = questions!.map((v) => v.toJson()).toList();
     }
     data['createdAt'] = createdAt;
+    data['subjectName'] = subjectName;
     return data;
   }
 }
@@ -38,21 +41,21 @@ class QuizModel {
 class Questions {
   String? questionText;
   List<String>? options;
-  String? correctAns;
+  int? correctAnswer;
 
-  Questions({this.questionText, this.options, this.correctAns});
+  Questions({this.questionText, this.options, this.correctAnswer});
 
   Questions.fromJson(Map<String, dynamic> json) {
     questionText = json['questionText'];
     options = json['options'].cast<String>();
-    correctAns = json['correctAns'];
+    correctAnswer = json['correctAnswer'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['questionText'] = questionText;
     data['options'] = options;
-    data['correctAns'] = correctAns;
+    data['correctAnswer'] = correctAnswer;
     return data;
   }
 }

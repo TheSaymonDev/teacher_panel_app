@@ -7,8 +7,10 @@ class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   /// User Sign In with Email & Password
-  Future<dynamic> logIn(
-      {required String email, required String password}) async {
+  Future<Map<String, dynamic>> logIn({
+    required String email,
+    required String password,
+  }) async {
     try {
       final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -21,102 +23,132 @@ class FirebaseService {
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Login failed: ${e.toString()}',
       };
     }
   }
 
-  /// Create Class To Firestore Firebase
-  Future<dynamic> createClass({
+  /// Create Class in Firestore
+  Future<Map<String, dynamic>> createClass({
     required String className,
-    String? classCode,
-    required String numOfStudents
+    required String numOfStudents,
   }) async {
     try {
-      final docRef = await _firestore.collection("classes").add({
+      await _firestore.collection("classes").add({
         'className': className,
-        'classCode': classCode,
         'numOfStudents': numOfStudents,
         'createdAt': FieldValue.serverTimestamp(),
       });
       return {
         'success': true,
-        'docId': docRef.id,
+        'message': 'Class created successfully',
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Failed to create class: ${e.toString()}',
       };
     }
   }
 
-  /// Read Classes From Firestore Firebase
-  Future<dynamic> readClasses({required String collectionName}) async {
+  /// Read Classes from Firestore
+  Future<Map<String, dynamic>> readClasses(
+      {required String collectionName}) async {
     try {
       final querySnapshot = await _firestore.collection(collectionName).get();
       return {
         'success': true,
-        'querySnapshot': querySnapshot,
+        'data': querySnapshot,
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Failed to read classes: ${e.toString()}',
       };
     }
   }
 
-  /// Update Class in Firestore Firebase
-  Future<dynamic> updateClass({
+  /// Update Class in Firestore
+  Future<Map<String, dynamic>> updateClass({
     required String classId,
     required String className,
-    String? classCode,
     required String numOfStudents,
   }) async {
     try {
       await _firestore.collection("classes").doc(classId).update({
         'className': className,
-        'classCode': classCode,
         'numOfStudents': numOfStudents,
-        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
       });
-
       return {
         'success': true,
-        'message': 'Class updated successfully.',
+        'message': 'Class updated successfully',
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Failed to update class: ${e.toString()}',
       };
     }
   }
 
   /// Delete Class from Firestore Firebase
-  Future<dynamic> deleteClass({required String classId}) async {
+  Future<Map<String, dynamic>> deleteClass({required String classId}) async {
     try {
-      await _firestore.collection("classes").doc(classId).delete();
+      final batch = _firestore.batch();
+
+      // Step 1: Fetch related subjects
+      final subjectsSnapshot = await _firestore
+          .collection("classes")
+          .doc(classId)
+          .collection("subjects")
+          .get();
+
+      for (final subject in subjectsSnapshot.docs) {
+        final subjectId = subject.id;
+
+        // Step 2: Fetch related quizzes for each subject
+        final quizzesSnapshot = await _firestore
+            .collection("classes")
+            .doc(classId)
+            .collection("subjects")
+            .doc(subjectId)
+            .collection("quizzes")
+            .get();
+
+        for (final quiz in quizzesSnapshot.docs) {
+          batch.delete(quiz.reference);
+        }
+
+        // Step 3: Delete the subject
+        batch.delete(subject.reference);
+      }
+
+      // Step 4: Delete the class
+      batch.delete(_firestore.collection("classes").doc(classId));
+
+      // Commit the batch
+      await batch.commit();
+
       return {
         'success': true,
-        'message': 'Class deleted successfully.',
+        'message': 'Class and all related data deleted successfully.',
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Failed to delete class: ${e.toString()}',
       };
     }
   }
 
-  /// Create Subject To Firestore Firebase
-  Future<dynamic> createSubject({
+  /// Create Subject To Firestore
+  Future<Map<String, dynamic>> createSubject({
     required String classId,
     required String subjectName,
   }) async {
     try {
-      final subjectRef = await _firestore
+      await _firestore
           .collection("classes")
           .doc(classId)
           .collection("subjects")
@@ -126,18 +158,18 @@ class FirebaseService {
       });
       return {
         'success': true,
-        'subjectId': subjectRef.id,
+        'message': 'Subject created successfully',
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Failed to create subject: ${e.toString()}',
       };
     }
   }
 
-  /// Read Subjects To Firestore Firebase
-  Future<dynamic> readSubjects({required String classId}) async {
+  /// Read Subjects From Firestore
+  Future<Map<String, dynamic>> readSubjects({required String classId}) async {
     try {
       final querySnapshot = await _firestore
           .collection("classes")
@@ -147,23 +179,24 @@ class FirebaseService {
 
       return {
         'success': true,
-        'querySnapshot': querySnapshot,
+        'data': querySnapshot,
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Failed to read subjects: ${e.toString()}',
       };
     }
   }
 
-  /// Update Subject To Firestore Firebase
-  Future<dynamic> updateSubject({
+  /// Update Subject To Firestore
+  Future<Map<String, dynamic>> updateSubject({
     required String classId,
     required String subjectId,
     required String subjectName,
   }) async {
     try {
+      // Step 1: Update subject
       await _firestore
           .collection("classes")
           .doc(classId)
@@ -174,50 +207,85 @@ class FirebaseService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      return {
-        'success': true,
-        'message': 'Subject updated successfully.',
-      };
-    } catch (e) {
-      return {
-        'success': false,
-        'message': e.toString(),
-      };
-    }
-  }
-
-  /// Delete Subject To Firestore Firebase
-  Future<dynamic> deleteSubject({
-    required String classId,
-    required String subjectId,
-  }) async {
-    try {
-      await _firestore
+      // ✅ Step 2: Update subjectName in all related quizzes
+      final quizCollectionRef = _firestore
           .collection("classes")
           .doc(classId)
           .collection("subjects")
           .doc(subjectId)
-          .delete();
+          .collection("quizzes");
+
+      final quizSnapshot = await quizCollectionRef.get();
+
+      for (var quizDoc in quizSnapshot.docs) {
+        await quizDoc.reference.update({
+          'subjectName': subjectName,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
 
       return {
         'success': true,
-        'message': 'Subject deleted successfully.',
+        'message': 'Subject and all related quizzes updated successfully',
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Failed to update subject and quizzes: ${e.toString()}',
+      };
+    }
+  }
+
+
+  /// Delete Subject To Firestore
+  Future<Map<String, dynamic>> deleteSubject({
+    required String classId,
+    required String subjectId,
+  }) async {
+    try {
+      final batch = _firestore.batch();
+
+      // Step 1: Fetch related quizzes
+      final quizzesSnapshot = await _firestore
+          .collection("classes")
+          .doc(classId)
+          .collection("subjects")
+          .doc(subjectId)
+          .collection("quizzes")
+          .get();
+
+      for (final quiz in quizzesSnapshot.docs) {
+        batch.delete(quiz.reference);
+      }
+
+      // Step 2: Delete the subject
+      batch.delete(
+          _firestore.collection("classes").doc(classId).collection("subjects").doc(subjectId));
+
+      // Commit the batch
+      await batch.commit();
+
+      return {
+        'success': true,
+        'message': 'Subject and all related quizzes deleted successfully.',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Failed to delete subject: ${e.toString()}',
       };
     }
   }
 
   /// Create Quiz To Firestore Firebase
-  Future<dynamic> createQuiz({
+  Future<Map<String, dynamic>> createQuiz({
     required String classId,
     required String subjectId,
     required String topicName,
     required String timeDuration, // in minutes
+    required String endTime,
     required List<Map<String, dynamic>> questions,
+    required String subjectName,
   }) async {
     try {
       final quizRef = await _firestore
@@ -229,23 +297,26 @@ class FirebaseService {
           .add({
         'topicName': topicName,
         'timeDuration': timeDuration,
+        'endTime': endTime,
         'questions': questions,
+        'subjectName': subjectName,
         'createdAt': FieldValue.serverTimestamp(),
       });
+      await quizRef.update({'quizId': quizRef.id});
       return {
         'success': true,
-        'quizId': quizRef.id,
+        'message': 'Quiz created successfully',
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Failed to create quiz: ${e.toString()}',
       };
     }
   }
 
-  /// Read Quizzes From Firestore Firebase
-  Future<dynamic> readQuizzes({
+  /// Read Quizzes From Firestore
+  Future<Map<String, dynamic>> readQuizzes({
     required String classId,
     required String subjectId,
   }) async {
@@ -260,24 +331,25 @@ class FirebaseService {
 
       return {
         'success': true,
-        'querySnapshot': querySnapshot,
+        'data': querySnapshot,
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Failed to read quizzes: ${e.toString()}',
       };
     }
   }
 
-  /// Update Quiz in Firestore Firebase
-  Future<dynamic> updateQuiz({
+  /// Update Quiz To Firestore
+  Future<Map<String, dynamic>> updateQuiz({
     required String classId,
     required String subjectId,
     required String quizId,
     required String topicName,
     required int timeDuration,
     required List<Map<String, dynamic>> questions,
+    required String subjectName,
   }) async {
     try {
       await _firestore
@@ -292,22 +364,23 @@ class FirebaseService {
         'timeDuration': timeDuration,
         'questions': questions,
         'updatedAt': FieldValue.serverTimestamp(),
+        'subjectName': subjectName,
       });
 
       return {
         'success': true,
-        'message': 'Quiz updated successfully.',
+        'message': 'Quiz updated successfully',
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Failed to update quiz: ${e.toString()}',
       };
     }
   }
 
-  /// Delete Quiz From Firestore Firebase
-  Future<dynamic> deleteQuiz({
+  /// Delete Quiz From Firestore
+  Future<Map<String, dynamic>> deleteQuiz({
     required String classId,
     required String subjectId,
     required String quizId,
@@ -324,40 +397,12 @@ class FirebaseService {
 
       return {
         'success': true,
-        'message': 'Quiz deleted successfully.',
+        'message': 'Quiz deleted successfully',
       };
     } catch (e) {
       return {
         'success': false,
-        'message': e.toString(),
-      };
-    }
-  }
-
-
-  /// Publish Questions to Firestore
-  Future<dynamic> publishQuestions({
-    required String subjectName,
-    required String topicName,
-    required int timeDuration,
-    required List<Map<String, dynamic>> questions,
-  }) async {
-    try {
-      final docRef = await _firestore.collection(subjectName).add({
-        'topicName': topicName,
-        'timeDuration': timeDuration,
-        'questions': questions,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-
-      return {
-        'success': true,
-        'docId': docRef.id,
-      };
-    } catch (e) {
-      return {
-        'success': false,
-        'message': e.toString(),
+        'message': 'Failed to delete quiz: ${e.toString()}',
       };
     }
   }

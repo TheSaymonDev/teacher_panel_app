@@ -56,12 +56,6 @@ class _UpsertClassBoxState extends State<UpsertClassBox> {
                 ),
                 Gap(16.h),
                 CustomTextFormField(
-                  controller: _upsertClassController.classCodeController,
-                  hintText: 'Class Code (Optional)',
-                  validator: AppValidators.requiredValidator,
-                ),
-                Gap(16.h),
-                CustomTextFormField(
                   controller: _upsertClassController.numOfStudentsController,
                   hintText: 'Number of Students',
                   keyBoardType: TextInputType.number,
@@ -122,8 +116,6 @@ class _UpsertClassBoxState extends State<UpsertClassBox> {
   void _assignData() {
     _upsertClassController.classNameController.text =
         widget.classData!.className ?? '';
-    _upsertClassController.classCodeController.text =
-        widget.classData!.classCode ?? '';
     _upsertClassController.numOfStudentsController.text =
         widget.classData!.numOfStudents ?? '';
   }

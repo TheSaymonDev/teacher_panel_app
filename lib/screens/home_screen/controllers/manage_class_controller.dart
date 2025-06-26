@@ -10,12 +10,12 @@ class ManageClassController extends GetxController {
   Future<bool> _readClasses() async {
     _setLoading(true);
     final response =
-    await FirebaseService().readClasses(collectionName: "classes");
+        await FirebaseService().readClasses(collectionName: "classes");
     _setLoading(false);
     if (response['success'] == true) {
-      final querySnapshot = response['querySnapshot'];
-      if (querySnapshot.docs.isNotEmpty) {
-        classes = querySnapshot.docs.map<ClassModel>((doc) {
+      final data = response['data'];
+      if (data.docs.isNotEmpty) {
+        classes = data.docs.map<ClassModel>((doc) {
           return ClassModel.fromFireStore(doc.data(), doc.id);
         }).toList();
         return true;
@@ -34,8 +34,7 @@ class ManageClassController extends GetxController {
   Future<bool> deleteClassById({required String classId}) async {
     final response = await FirebaseService().deleteClass(classId: classId);
     if (response['success'] == true) {
-      AppConstFunctions.customSuccessMessage(
-          message: 'Successfully Class Deleted');
+      AppConstFunctions.customSuccessMessage(message: response['message']);
       _readClasses();
       return true;
     } else {
@@ -45,7 +44,7 @@ class ManageClassController extends GetxController {
     }
   }
 
-  void refreshClass(){
+  void refreshClass() {
     _readClasses();
   }
 

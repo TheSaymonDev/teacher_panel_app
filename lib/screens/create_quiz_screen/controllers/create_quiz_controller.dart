@@ -11,6 +11,8 @@ class CreateQuizController extends GetxController {
   final formKey = GlobalKey<FormState>();
   final topicNameController = TextEditingController();
   int selectedDuration = 10;
+  final endTimeController = TextEditingController();
+  DateTime? endTime;
 
   void updateDuration(int newDuration) {
     selectedDuration = newDuration;
@@ -42,21 +44,52 @@ class CreateQuizController extends GetxController {
     final subjectDetailsController = Get.find<SubjectDetailsController>();
 
     final response = await FirebaseService().createQuiz(
-        classId: subjectDetailsController.classId,
-        subjectId: subjectDetailsController.subjectId,
-        topicName: topicNameController.text,
-        timeDuration: selectedDuration.toString(),
-        questions: formattedQuestions);
+      classId: subjectDetailsController.classId,
+      subjectId: subjectDetailsController.subjectId,
+      topicName: topicNameController.text,
+      timeDuration: selectedDuration.toString(),
+      endTime: endTimeController.text,
+      questions: formattedQuestions,
+      subjectName: subjectDetailsController.subjectData.subjectName!
+    );
 
     if (response['success'] == true) {
-      AppConstFunctions.customSuccessMessage(
-          message: 'Successfully Quiz Published');
+      AppConstFunctions.customSuccessMessage(message: response['message']);
       Get.find<SubjectDetailsController>().refreshQuizzes();
       return true;
     } else {
       AppConstFunctions.customErrorMessage(
           message: response['message'] ?? 'Something went wrong');
       return false;
+    }
+  }
+
+  void pickEndDateTime(BuildContext context) async {
+    final selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+    if (selectedDate != null) {
+      final selectedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (selectedTime != null) {
+        endTime = DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedTime.hour,
+          selectedTime.minute,
+        );
+        endTimeController.text =
+            AppConstFunctions.formatDateTime(endTime!); // Format করে দেখাও
+        update();
+      }
     }
   }
 }

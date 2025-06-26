@@ -15,20 +15,20 @@ class ClassDetailsController extends GetxController {
     final response = await FirebaseService().readSubjects(classId: classId);
     _setLoading(false);
     if (response['success'] == true) {
-      final querySnapshot = response['querySnapshot'];
-      if (querySnapshot.docs.isNotEmpty) {
-        subjects = querySnapshot.docs.map<SubjectModel>((doc) {
+      final data = response['data'];
+      if (data.docs.isNotEmpty) {
+        subjects = data.docs.map<SubjectModel>((doc) {
           return SubjectModel.fromFireStore(doc.data(), doc.id);
         }).toList();
         return true;
       } else {
         subjects = [];
-        AppConstFunctions.customErrorMessage(message: 'No subject found.');
+        AppConstFunctions.customErrorMessage(message: 'No subject found');
         return false;
       }
     } else {
       AppConstFunctions.customErrorMessage(
-          message: response['message'] ?? 'Something went wrong.');
+          message: response['message'] ?? 'Something went wrong');
       return false;
     }
   }

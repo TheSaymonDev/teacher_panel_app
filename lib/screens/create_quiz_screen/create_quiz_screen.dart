@@ -298,6 +298,26 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
                 );
               },
             ),
+            Gap(16.h),
+
+            // End Time Picker
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: GetBuilder<CreateQuizController>(
+                builder: (controller) {
+                  return CustomTextFormField(
+                    hintText: "Select End Time",
+                    controller: controller.endTimeController,
+                    readOnly: true,
+                    validator: AppValidators.requiredValidator,
+                    suffixIcon: IconButton(
+                        onPressed: () => controller.pickEndDateTime(context),
+                        icon: Icon(Icons.timelapse)),
+                  );
+                },
+              ),
+            ),
+            Gap(16.h)
           ],
         ),
       ),

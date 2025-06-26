@@ -38,4 +38,8 @@ class AppConstFunctions {
     // Format the DateTime
     return formatter.format(dateTime);
   }
+
+  static String formatDateTime(DateTime dateTime) {
+    return "${dateTime.day}/${dateTime.month}/${dateTime.year} - ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
+  }
 }

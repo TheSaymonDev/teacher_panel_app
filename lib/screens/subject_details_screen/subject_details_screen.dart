@@ -4,13 +4,14 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:teacher_panel/routes/app_routes.dart';
 import 'package:teacher_panel/screens/subject_details_screen/controllers/subject_details_controller.dart';
+import 'package:teacher_panel/screens/subject_details_screen/models/quiz_model.dart';
 import 'package:teacher_panel/utils/app_colors.dart';
 import 'package:teacher_panel/utils/app_const_functions.dart';
 import 'package:teacher_panel/widgets/custom_app_bar_with_title.dart';
 import 'package:teacher_panel/widgets/custom_elevated_btn.dart';
 import 'package:teacher_panel/widgets/custom_empty_widget.dart';
+import 'package:teacher_panel/widgets/custom_expansion_tile.dart';
 import 'package:teacher_panel/widgets/custom_gradient_container.dart';
-import 'package:teacher_panel/widgets/custom_list_tile.dart';
 
 class SubjectDetailsScreen extends StatelessWidget {
   SubjectDetailsScreen({super.key});
@@ -81,7 +82,7 @@ class SubjectDetailsScreen extends StatelessWidget {
                 Icon(Icons.quiz, size: 20.sp, color: Colors.white),
                 Gap(8.w),
                 Text(
-                  "Total Quizzes: 2",
+                  "Total Quizzes: ${controller.quizzes.length}",
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium
@@ -107,8 +108,7 @@ class SubjectDetailsScreen extends StatelessWidget {
                   itemCount: controller.quizzes.length,
                   itemBuilder: (context, index) {
                     final quizItem = controller.quizzes[index];
-                    return CustomListTile(
-                        onTap: () {},
+                    return CustomExpansionTile(
                         title: quizItem.topicName ?? '',
                         subTitle:
                             'Date: ${AppConstFunctions.formatCreatedAt(quizItem.createdAt!)}',
@@ -120,11 +120,74 @@ class SubjectDetailsScreen extends StatelessWidget {
                                   quizItem.id!,
                                 ),
                             icon: Icon(Icons.delete,
-                                color: AppColors.secondaryClr, size: 20.sp)));
+                                color: AppColors.secondaryClr, size: 20.sp)),
+                        expandedContent:
+                            _buildExpandedQuestions(quizItem, context));
                   },
                   separatorBuilder: (context, index) => Gap(8.h),
                 ),
     );
+  }
+
+  Column _buildExpandedQuestions(QuizModel quizItem, BuildContext context) {
+    return Column(
+        spacing: 16.h,
+        children: List.generate(quizItem.questions!.length, (index) {
+          final question = quizItem.questions![index];
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('${index + 1}. ${question.questionText}',
+                  style: Theme.of(context).textTheme.bodyMedium),
+              Gap(8.h),
+              Row(
+                children: [
+                  Expanded(
+                      child: Text('ক। ${question.options![0]}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: question.correctAnswer == 0
+                                      ? AppColors.greenClr
+                                      : null))),
+                  Expanded(
+                      child: Text('খ। ${question.options![1]}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: question.correctAnswer == 1
+                                      ? AppColors.greenClr
+                                      : null))),
+                ],
+              ),
+              Gap(4.h),
+              Row(
+                children: [
+                  Expanded(
+                      child: Text('গ। ${question.options![2]}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: question.correctAnswer == 2
+                                      ? AppColors.greenClr
+                                      : null))),
+                  Expanded(
+                      child: Text('ঘ। ${question.options![3]}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: question.correctAnswer == 3
+                                      ? AppColors.greenClr
+                                      : null))),
+                ],
+              ),
+            ],
+          );
+        }));
   }
 
   void _showQuizDeleteConfirmationDialog(

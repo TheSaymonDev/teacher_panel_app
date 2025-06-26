@@ -13,40 +13,50 @@ class SubjectDetailsController extends GetxController {
   bool isLoading = false;
   List<QuizModel> quizzes = [];
 
-  Future<bool> _readQuizzes(
-      {required String classId, required String subjectId}) async {
+  Future<bool> _readQuizzes({
+    required String classId,
+    required String subjectId,
+  }) async {
     _setLoading(true);
-    final response = await FirebaseService()
-        .readQuizzes(classId: classId, subjectId: subjectId);
+    final response = await FirebaseService().readQuizzes(
+      classId: classId,
+      subjectId: subjectId,
+    );
     _setLoading(false);
     if (response['success'] == true) {
-      final querySnapshot = response['querySnapshot'];
-      if (querySnapshot.docs.isNotEmpty) {
-        quizzes = querySnapshot.docs.map<QuizModel>((doc) {
-          return QuizModel.fromFireStore(doc.data(), doc.id);
+      final data = response['data'];
+      if (data.docs.isNotEmpty) {
+        quizzes = data.docs.map<QuizModel>((doc) {
+          return QuizModel.fromFireStore(
+            doc.data(),
+            doc.id,
+          );
         }).toList();
         return true;
       } else {
         quizzes = [];
-        AppConstFunctions.customErrorMessage(message: 'No quiz found.');
+        AppConstFunctions.customErrorMessage(message: 'No quiz found');
         return false;
       }
     } else {
       AppConstFunctions.customErrorMessage(
-          message: response['message'] ?? 'Something went wrong.');
+          message: response['message'] ?? 'Something went wrong');
       return false;
     }
   }
 
-  Future<bool> deleteQuizById(
-      {required String classId,
-      required String subjectId,
-      required String quizId}) async {
-    final response = await FirebaseService()
-        .deleteQuiz(classId: classId, subjectId: subjectId, quizId: quizId);
+  Future<bool> deleteQuizById({
+    required String classId,
+    required String subjectId,
+    required String quizId,
+  }) async {
+    final response = await FirebaseService().deleteQuiz(
+      classId: classId,
+      subjectId: subjectId,
+      quizId: quizId,
+    );
     if (response['success'] == true) {
-      AppConstFunctions.customSuccessMessage(
-          message: 'Successfully Quiz Deleted');
+      AppConstFunctions.customSuccessMessage(message: response['message']);
       _readQuizzes(classId: classId, subjectId: subjectId);
       return true;
     } else {
