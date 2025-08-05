@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:teacher_panel/screens/home_screen/controllers/manage_class_controller.dart';
-import 'package:teacher_panel/services/firebase_service.dart';
-import 'package:teacher_panel/utils/app_const_functions.dart';
+import 'package:teacher_panel/data/services/firebase_service.dart';
+import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
 class UpsertClassController extends GetxController {
   bool isLoading = false;
@@ -10,16 +10,29 @@ class UpsertClassController extends GetxController {
   final classNameController = TextEditingController();
   final numOfStudentsController = TextEditingController();
 
+  final _firebaseService = FirebaseService();
+
+  void _setLoading(bool value) {
+    isLoading = value;
+    update();
+  }
+
+  void _clearFields() {
+    classNameController.clear();
+    numOfStudentsController.clear();
+  }
+
   Future<bool> createClass() async {
     _setLoading(true);
-    final response = await FirebaseService().createClass(
+    final response = await _firebaseService.createClass(
       className: classNameController.text,
       numOfStudents: numOfStudentsController.text,
     );
     _setLoading(false);
+
     if (response['success'] == true) {
       AppConstFunctions.customSuccessMessage(message: response['message']);
-      _clearAllFields();
+      _clearFields();
       Get.find<ManageClassController>().refreshClass();
       return true;
     } else {
@@ -31,15 +44,16 @@ class UpsertClassController extends GetxController {
 
   Future<bool> updateClass({required String classId}) async {
     _setLoading(true);
-    final response = await FirebaseService().updateClass(
+    final response = await _firebaseService.updateClass(
       classId: classId,
       className: classNameController.text,
       numOfStudents: numOfStudentsController.text,
     );
     _setLoading(false);
+
     if (response['success'] == true) {
       AppConstFunctions.customSuccessMessage(message: response['message']);
-      _clearAllFields();
+      _clearFields();
       Get.find<ManageClassController>().refreshClass();
       return true;
     } else {
@@ -49,13 +63,10 @@ class UpsertClassController extends GetxController {
     }
   }
 
-  void _clearAllFields() {
-    classNameController.clear();
-    numOfStudentsController.clear();
-  }
-
-  void _setLoading(bool value) {
-    isLoading = value;
-    update();
+  @override
+  void onClose() {
+    classNameController.dispose();
+    numOfStudentsController.dispose();
+    super.onClose();
   }
 }

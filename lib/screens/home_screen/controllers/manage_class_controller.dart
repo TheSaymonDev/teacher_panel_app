@@ -1,41 +1,71 @@
 import 'package:get/get.dart';
-import 'package:teacher_panel/screens/home_screen/models/class_model.dart';
-import 'package:teacher_panel/services/firebase_service.dart';
-import 'package:teacher_panel/utils/app_const_functions.dart';
+import 'package:teacher_panel/data/models/class_model.dart';
+import 'package:teacher_panel/data/services/firebase_service.dart';
+import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
 class ManageClassController extends GetxController {
   bool isLoading = false;
   List<ClassModel> classes = [];
 
-  Future<bool> _readClasses() async {
+  int totalClasses = 0;
+  int totalSubjects = 0;
+  int totalStudents = 0;
+
+  final _firebaseService = FirebaseService();
+
+  @override
+  void onInit() {
+    super.onInit();
+    _fetchDashboardData();
+  }
+
+  Future<void> _fetchDashboardData() async {
     _setLoading(true);
-    final response =
-        await FirebaseService().readClasses(collectionName: "classes");
-    _setLoading(false);
-    if (response['success'] == true) {
-      final data = response['data'];
-      if (data.docs.isNotEmpty) {
-        classes = data.docs.map<ClassModel>((doc) {
-          return ClassModel.fromFireStore(doc.data(), doc.id);
-        }).toList();
-        return true;
-      } else {
-        classes = [];
-        AppConstFunctions.customErrorMessage(message: 'No class found.');
-        return false;
+
+    final classResponse = await _firebaseService.readClasses();
+
+    if (classResponse['success'] == true) {
+      final classDocs = classResponse['data'].docs;
+
+      totalClasses = classDocs.length;
+      totalSubjects = 0;
+      totalStudents = 0;
+      classes = [];
+
+      for (final doc in classDocs) {
+        final classModel = ClassModel.fromFireStore(doc.data(), doc.id);
+        classes.add(classModel);
+
+        // Count students
+        final studentCount =
+            int.tryParse(classModel.numOfStudents ?? '0') ?? 0;
+        totalStudents += studentCount;
+
+        // Read subjects using service
+        final subjectResponse =
+        await _firebaseService.readSubjects(classId: doc.id);
+
+        if (subjectResponse['success'] == true) {
+          totalSubjects += subjectResponse['data'].docs.length as int;
+        } else {
+          AppConstFunctions.customErrorMessage(
+              message: subjectResponse['message']);
+        }
       }
     } else {
       AppConstFunctions.customErrorMessage(
-          message: response['message'] ?? 'Something went wrong.');
-      return false;
+          message: classResponse['message'] ?? 'Failed to fetch classes');
     }
+
+    _setLoading(false);
   }
 
   Future<bool> deleteClassById({required String classId}) async {
-    final response = await FirebaseService().deleteClass(classId: classId);
+    final response = await _firebaseService.deleteClass(classId: classId);
+
     if (response['success'] == true) {
       AppConstFunctions.customSuccessMessage(message: response['message']);
-      _readClasses();
+      await _fetchDashboardData();
       return true;
     } else {
       AppConstFunctions.customErrorMessage(
@@ -45,13 +75,7 @@ class ManageClassController extends GetxController {
   }
 
   void refreshClass() {
-    _readClasses();
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-    _readClasses();
+    _fetchDashboardData();
   }
 
   void _setLoading(bool value) {

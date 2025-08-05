@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import 'package:teacher_panel/routes/app_routes.dart';
-import 'package:teacher_panel/services/connectivity_service.dart';
-import 'package:teacher_panel/services/shared_preference_service.dart';
-import 'package:teacher_panel/utils/app_const_functions.dart';
+import 'package:teacher_panel/config/routes/app_routes.dart';
+import 'package:teacher_panel/data/services/connectivity_service.dart';
+import 'package:teacher_panel/data/services/shared_preference_service.dart';
+import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
 
 class ConnectionController extends GetxController {

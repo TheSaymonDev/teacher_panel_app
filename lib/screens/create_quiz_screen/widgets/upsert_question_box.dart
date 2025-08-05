@@ -3,12 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:teacher_panel/screens/create_quiz_screen/controllers/question_controller.dart';
-import 'package:teacher_panel/utils/app_colors.dart';
-import 'package:teacher_panel/utils/app_const_functions.dart';
-import 'package:teacher_panel/utils/app_validators.dart';
-import 'package:teacher_panel/widgets/custom_elevated_btn.dart';
-import 'package:teacher_panel/widgets/custom_outlined_btn.dart';
-import 'package:teacher_panel/widgets/custom_text_form_field.dart';
+import 'package:teacher_panel/core/utils/app_colors.dart';
+import 'package:teacher_panel/core/utils/app_const_functions.dart';
+import 'package:teacher_panel/core/utils/app_validators.dart';
+import 'package:teacher_panel/core/widgets/custom_elevated_btn.dart';
+import 'package:teacher_panel/core/widgets/custom_outlined_btn.dart';
+import 'package:teacher_panel/core/widgets/custom_text_form_field.dart';
 
 class UpsertQuestionBox extends StatefulWidget {
   final bool isUpdate;
@@ -47,13 +47,13 @@ class _UpsertQuestionBoxState extends State<UpsertQuestionBox> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.isUpdate ? "Update Question" : "Add Question",
+                  widget.isUpdate ? "update_question".tr : "add_question".tr,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Gap(20.h),
                 CustomTextFormField(
                   controller: _upsertQuestionController.questionController,
-                  hintText: 'Question',
+                  hintText: 'question'.tr,
                   maxLines: 3,
                   validator: AppValidators.requiredValidator,
                 ),
@@ -64,7 +64,7 @@ class _UpsertQuestionBoxState extends State<UpsertQuestionBox> {
                     4,
                     (index) => CustomTextFormField(
                       controller: _upsertQuestionController.optionControllers[index],
-                      hintText: 'Option ${index + 1}',
+                      hintText: '${'option'.tr} ${index + 1}',
                       validator: AppValidators.requiredValidator,
                     ),
                   ),
@@ -83,7 +83,7 @@ class _UpsertQuestionBoxState extends State<UpsertQuestionBox> {
                     children: [
                       Gap(12.h),
                       Text(
-                        'Choose Correct Answer',
+                        'choose_correct_answer'.tr,
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       Expanded(
@@ -99,15 +99,15 @@ class _UpsertQuestionBoxState extends State<UpsertQuestionBox> {
                                   children: [
                                     Radio(
                                       value: index,
-                                      groupValue: controller.selectedCorrectAns,
+                                      groupValue: controller.selectedCorrectAnswer,
                                       onChanged: (value) =>
-                                          controller.updateCorrectAns(value!),
+                                          controller.updateCorrectAnswer(value!),
                                       visualDensity: VisualDensity.compact,
                                       materialTapTargetSize:
                                           MaterialTapTargetSize.shrinkWrap,
                                     ),
                                     Text(
-                                      'Option ${index + 1}',
+                                      '${'option'.tr} ${index + 1}',
                                       style:
                                           Theme.of(context).textTheme.bodySmall,
                                     ),
@@ -133,7 +133,7 @@ class _UpsertQuestionBoxState extends State<UpsertQuestionBox> {
                                     onPressed: () {
                                       Get.back();
                                     },
-                                    name: 'CANCEL'),
+                                    name: 'cancel'.tr),
                               ),
                               Gap(32.w),
                               Expanded(
@@ -141,7 +141,7 @@ class _UpsertQuestionBoxState extends State<UpsertQuestionBox> {
                                       onPressed: () {
                                         _formOnSubmit(controller);
                                       },
-                                      name: widget.isUpdate ? 'UPDATE' : 'SAVE'))
+                                      name: widget.isUpdate ? 'update'.tr : 'save'.tr))
                             ],
                           )),
               ],
@@ -168,6 +168,6 @@ class _UpsertQuestionBoxState extends State<UpsertQuestionBox> {
     for (int i = 0; i < 4; i++) {
       _upsertQuestionController.optionControllers[i].text = question.options[i];
     }
-    _upsertQuestionController.selectedCorrectAns = question.correctAnswer;
+    _upsertQuestionController.selectedCorrectAnswer = question.correctAnswer;
   }
 }

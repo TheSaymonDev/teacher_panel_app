@@ -1,19 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:teacher_panel/core/utils/app_colors.dart';
+import 'package:teacher_panel/core/widgets/custom_app_bar_with_title.dart';
+import 'package:teacher_panel/data/services/hive_service.dart';
 import 'package:teacher_panel/screens/create_quiz_screen/controllers/create_quiz_controller.dart';
 import 'package:teacher_panel/screens/create_quiz_screen/controllers/question_controller.dart';
+import 'package:teacher_panel/screens/create_quiz_screen/widgets/question_list.dart';
+import 'package:teacher_panel/screens/create_quiz_screen/widgets/quiz_meta_form.dart';
 import 'package:teacher_panel/screens/create_quiz_screen/widgets/upsert_question_box.dart';
-import 'package:teacher_panel/services/hive_service.dart';
-import 'package:teacher_panel/utils/app_colors.dart';
-import 'package:teacher_panel/utils/app_const_functions.dart';
-import 'package:teacher_panel/utils/app_validators.dart';
-import 'package:teacher_panel/widgets/custom_app_bar_with_title.dart';
-import 'package:teacher_panel/widgets/custom_empty_widget.dart';
-import 'package:teacher_panel/widgets/custom_pop_up_menu.dart';
-import 'package:teacher_panel/widgets/custom_text_form_field.dart';
 
 class CreateQuizScreen extends StatefulWidget {
   const CreateQuizScreen({super.key});
@@ -32,9 +29,7 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
     final hasData = HiveService().getQuestions();
     if (hasData.isNotEmpty) {
       Future.delayed(Duration.zero, () {
-        if (mounted) {
-          _showAlertDialogForDataLoad(context);
-        }
+        if (mounted) _showAlertDialogForDataLoad();
       });
     }
   }
@@ -43,321 +38,111 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBarWithTitle(
+        title: 'questions'.tr,
         onPressed: () => Get.back(),
-        title: 'QUESTIONS',
-        actions: [_buildPublishBtn(context), Gap(12.w)],
+        actions: [_buildPublishButton(), Gap(12.w)],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Gap(16.h),
-              _buildTopicHeader(context),
-              _buildQuestionList(context),
-            ],
-          ),
+        child: Column(
+          children: const [
+            QuizMetaForm(),
+            Expanded(child: QuestionList()),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
-            ),
-            builder: (context) => UpsertQuestionBox(),
-          );
-        },
-        label: Text('Create',
+        label: Text('create'.tr,
             style: Theme.of(context)
                 .textTheme
                 .titleMedium!
                 .copyWith(color: Colors.white)),
-        icon: Icon(CupertinoIcons.add_circled_solid),
-        foregroundColor: Colors.white,
+        icon: const Icon(CupertinoIcons.add_circled_solid),
+        onPressed: () => _showUpsertBottomSheet(),
       ),
     );
   }
 
-  GetBuilder<QuestionController> _buildPublishBtn(BuildContext context) {
+  Widget _buildPublishButton() {
     return GetBuilder<QuestionController>(
       builder: (controller) {
-        final isPublishable = controller.questions.length >= 5;
-        return SizedBox(
-          height: 36.h,
-          child: OutlinedButton(
-            onPressed: isPublishable
-                ? () {
-                    _showAlertDialogForPublish(context);
-                  }
-                : null,
-            style: OutlinedButton.styleFrom(
-                side: BorderSide(
-                    color: isPublishable
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey,
-                    width: 1.5.w)),
-            child: Text(
-              'Publish',
-              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                  color: isPublishable ? AppColors.primaryClr : Colors.grey),
-            ),
+        final isEnabled = controller.questions.length >= 5;
+        return OutlinedButton(
+          onPressed: isEnabled ? _showPublishDialog : null,
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(
+                color: isEnabled ? AppColors.primaryClr : Colors.grey),
           ),
+          child: Text('publish'.tr,
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  color: isEnabled ? AppColors.primaryClr : Colors.grey)),
         );
       },
     );
   }
 
-  void _showAlertDialogForPublish(BuildContext context) {
+  void _showPublishDialog() {
     showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text('Confirm Publish',
-                  style: Theme.of(context).textTheme.titleMedium),
-              content: Text('Are you sure you want to publish this quiz?',
-                  style: Theme.of(context).textTheme.bodyMedium),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Cancel',
-                        style: Theme.of(context).textTheme.bodyMedium)),
-                ElevatedButton(
-                    onPressed: () async {
-                      final result = await _createQuizController.createQuiz();
-                      if (result && context.mounted) {
-                        HiveService().clearAllData();
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryClr),
-                    child: Text('Confirm',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .copyWith(color: Colors.white))),
-              ],
-            ));
-  }
-
-  Widget _buildQuestionList(BuildContext context) {
-    return GetBuilder<QuestionController>(
-        builder: (controller) => controller.isLoading
-            ? AppConstFunctions.customCircularProgressIndicator
-            : controller.questions.isEmpty
-                ? CustomEmptyWidget(title: 'No Questions Available!')
-                : ListView.separated(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
-                    separatorBuilder: (context, index) => Gap(12.h),
-                    itemCount: controller.questions.length,
-                    itemBuilder: (context, index) {
-                      final question = controller.questions[index];
-                      return Container(
-                        width: double.infinity.w,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 12.w, vertical: 8.h),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: AppColors.primaryClr, width: 2.w),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 8.h,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                      '${index + 1}. ${question.questionText}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium),
-                                ),
-                                CustomPopUpMenu(onUpdate: () {
-                                  showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(12.r))),
-                                      builder: (context) => UpsertQuestionBox(
-                                          isUpdate: true,
-                                          questionIndex: index));
-                                }, onDelete: () {
-                                  controller.deleteQuestionByIndex(index);
-                                }),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: Text('ক। ${question.options[0]}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(
-                                                color:
-                                                    question.correctAnswer == 0
-                                                        ? AppColors.greenClr
-                                                        : null))),
-                                Expanded(
-                                    child: Text('খ। ${question.options[1]}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(
-                                                color:
-                                                    question.correctAnswer == 1
-                                                        ? AppColors.greenClr
-                                                        : null))),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: Text('গ। ${question.options[2]}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(
-                                                color:
-                                                    question.correctAnswer == 2
-                                                        ? AppColors.greenClr
-                                                        : null))),
-                                Expanded(
-                                    child: Text('ঘ। ${question.options[3]}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(
-                                                color:
-                                                    question.correctAnswer == 3
-                                                        ? AppColors.greenClr
-                                                        : null))),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ));
-  }
-
-  Widget _buildTopicHeader(BuildContext context) {
-    return Form(
-      key: _createQuizController.formKey,
-      child: Card(
-        elevation: 4,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              child: CustomTextFormField(
-                controller: _createQuizController.topicNameController,
-                hintText: 'Topic Name',
-                validator: AppValidators.requiredValidator,
-              ),
-            ),
-            Gap(16.h),
-            GetBuilder<CreateQuizController>(
-              builder: (controller) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: Text(
-                        "Time: ${controller.selectedDuration} minutes",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    Slider(
-                      value: controller.selectedDuration.toDouble(),
-                      min: 1,
-                      max: 60,
-                      divisions: 59,
-                      inactiveColor:
-                          context.isDarkMode ? Colors.white38 : Colors.black12,
-                      label: "${controller.selectedDuration} minutes",
-                      onChanged: (value) {
-                        controller.updateDuration(value.toInt());
-                      },
-                    ),
-                  ],
-                );
-              },
-            ),
-            Gap(16.h),
-
-            // End Time Picker
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: GetBuilder<CreateQuizController>(
-                builder: (controller) {
-                  return CustomTextFormField(
-                    hintText: "Select End Time",
-                    controller: controller.endTimeController,
-                    readOnly: true,
-                    validator: AppValidators.requiredValidator,
-                    suffixIcon: IconButton(
-                        onPressed: () => controller.pickEndDateTime(context),
-                        icon: Icon(Icons.timelapse)),
-                  );
-                },
-              ),
-            ),
-            Gap(16.h)
-          ],
-        ),
+      context: context,
+      builder: (_) => AlertDialog(
+        title:  Text('confirm_publish'.tr),
+        content:  Text('confirm_publish_message'.tr),
+        actions: [
+          TextButton(onPressed: Get.back, child:  Text('cancel'.tr)),
+          ElevatedButton(
+            onPressed: () async {
+              final result = await _createQuizController.createQuiz();
+              if (result && mounted) {
+                Get.close(2); // Close alert & screen
+                HiveService().clearAllData();
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            child: Text('confirm'.tr, style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }
 
-  void _showAlertDialogForDataLoad(BuildContext context) {
+  void _showUpsertBottomSheet({bool isUpdate = false, int? index}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(12.r))),
+      builder: (_) => UpsertQuestionBox(
+        isUpdate: isUpdate,
+        questionIndex: index,
+      ),
+    );
+  }
+
+  void _showAlertDialogForDataLoad() {
     showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text('Saved Quiz Found!',
-                  style: Theme.of(context).textTheme.titleMedium),
-              content: Text('You have saved data. Do you want to load it?',
-                  style: Theme.of(context).textTheme.bodyMedium),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    HiveService().clearAllData();
-                  },
-                  child: Text(
-                    'Discard',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    _questionController.getQuestionsFromLocalDb();
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryClr),
-                  child: Text('Load',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: Colors.white)),
-                ),
-              ],
-            ));
+      barrierDismissible: false,
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('saved_quiz_found'.tr),
+        content: Text('saved_quiz_found_message'.tr),
+        actions: [
+          TextButton(
+            onPressed: () {
+              HiveService().clearAllData();
+              Get.back();
+            },
+            child: Text('discard'.tr),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _questionController.getQuestionsFromLocalDb();
+              Get.back();
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            child: Text('load'.tr, style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 }

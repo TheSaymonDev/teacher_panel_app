@@ -3,9 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:teacher_panel/screens/no_internet_screen/controllers/connection_controller.dart';
-import 'package:teacher_panel/utils/app_colors.dart';
-import 'package:teacher_panel/utils/app_const_functions.dart';
-import 'package:teacher_panel/widgets/custom_elevated_btn.dart';
+import 'package:teacher_panel/core/utils/app_colors.dart';
+import 'package:teacher_panel/core/utils/app_const_functions.dart';
+import 'package:teacher_panel/core/widgets/custom_elevated_btn.dart';
 
 class NoInternetScreen extends StatelessWidget {
   const NoInternetScreen({super.key});

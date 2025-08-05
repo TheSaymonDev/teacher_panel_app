@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:teacher_panel/utils/app_colors.dart';
+import 'package:teacher_panel/core/utils/app_colors.dart';
 
 class QuickActionCard extends StatelessWidget {
   final void Function() onTap;

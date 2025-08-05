@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:teacher_panel/screens/class_details_screen/models/subject_model.dart';
-import 'package:teacher_panel/screens/home_screen/models/class_model.dart';
+import 'package:teacher_panel/data/models/subject_model.dart';
+import 'package:teacher_panel/data/models/class_model.dart';
 import 'package:teacher_panel/screens/subject_details_screen/models/quiz_model.dart';
-import 'package:teacher_panel/services/firebase_service.dart';
-import 'package:teacher_panel/utils/app_const_functions.dart';
+import 'package:teacher_panel/data/services/firebase_service.dart';
+import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
 class SubjectDetailsController extends GetxController {
   late ClassModel classData;

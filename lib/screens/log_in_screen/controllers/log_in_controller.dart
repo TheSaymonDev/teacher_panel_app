@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:teacher_panel/services/firebase_service.dart';
-import 'package:teacher_panel/services/shared_preference_service.dart';
-import 'package:teacher_panel/utils/app_const_functions.dart';
+import 'package:teacher_panel/data/services/firebase_service.dart';
+import 'package:teacher_panel/data/services/shared_preference_service.dart';
+import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
 class LogInController extends GetxController {
   bool isLoading = false;
@@ -15,10 +15,8 @@ class LogInController extends GetxController {
   Future<bool> logInUser() async {
     _setLoading(true);
 
-    final response = await FirebaseService().logIn(
-     email: emailController.text,
-      password: passwordController.text
-    );
+    final response = await FirebaseService()
+        .logIn(email: emailController.text, password: passwordController.text);
 
     _setLoading(false);
 
@@ -42,5 +40,12 @@ class LogInController extends GetxController {
   void _setLoading(bool value) {
     isLoading = value;
     update();
+  }
+
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.onClose();
   }
 }

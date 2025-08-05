@@ -3,12 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:teacher_panel/screens/home_screen/controllers/upsert_class_controller.dart';
-import 'package:teacher_panel/screens/home_screen/models/class_model.dart';
-import 'package:teacher_panel/utils/app_const_functions.dart';
-import 'package:teacher_panel/utils/app_validators.dart';
-import 'package:teacher_panel/widgets/custom_elevated_btn.dart';
-import 'package:teacher_panel/widgets/custom_outlined_btn.dart';
-import 'package:teacher_panel/widgets/custom_text_form_field.dart';
+import 'package:teacher_panel/data/models/class_model.dart';
+import 'package:teacher_panel/core/utils/app_const_functions.dart';
+import 'package:teacher_panel/core/utils/app_validators.dart';
+import 'package:teacher_panel/core/widgets/custom_elevated_btn.dart';
+import 'package:teacher_panel/core/widgets/custom_outlined_btn.dart';
+import 'package:teacher_panel/core/widgets/custom_text_form_field.dart';
 
 class UpsertClassBox extends StatefulWidget {
   final bool isUpdate;

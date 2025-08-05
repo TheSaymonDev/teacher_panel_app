@@ -1,40 +1,69 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:teacher_panel/core/utils/app_const_functions.dart';
+import 'package:teacher_panel/data/services/firebase_service.dart';
+import 'package:teacher_panel/data/services/hive_service.dart';
+import 'package:teacher_panel/data/services/notification_service.dart';
 import 'package:teacher_panel/screens/subject_details_screen/controllers/subject_details_controller.dart';
-import 'package:teacher_panel/services/firebase_service.dart';
-import 'package:teacher_panel/services/hive_service.dart';
-import 'package:teacher_panel/services/notification_service.dart';
-import 'package:teacher_panel/utils/app_const_functions.dart';
 
 class CreateQuizController extends GetxController {
-  bool isLoading = false;
-
   final formKey = GlobalKey<FormState>();
   final topicNameController = TextEditingController();
-  int selectedDuration = 10;
   final endTimeController = TextEditingController();
+
+  int selectedDuration = 10;
   DateTime? endTime;
-  final subjectDetailsController = Get.find<SubjectDetailsController>();
+  bool isLoading = false;
+
+  final SubjectDetailsController _subjectDetailsController = Get.find();
 
   void updateDuration(int newDuration) {
     selectedDuration = newDuration;
     update();
   }
 
+  Future<void> pickEndDateTime(BuildContext context) async {
+    final selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+    if (selectedDate == null) return;
+    if (!context.mounted) return; // ✅ context validity check
+
+    final selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (selectedTime == null) return;
+    if (!context.mounted) return; // ✅ context validity check
+
+    endTime = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      selectedTime.hour,
+      selectedTime.minute,
+    );
+
+    endTimeController.text = AppConstFunctions.formatDateTime(endTime!);
+    update();
+  }
+
   Future<bool> createQuiz() async {
     final questions = HiveService().getQuestions();
 
-    if (topicNameController.text.isEmpty) {
-      AppConstFunctions.customErrorMessage(
-          message: 'Topic name cannot be empty.');
+    final validationMsg = _validateInput(questions);
+    if (validationMsg != null) {
+      AppConstFunctions.customErrorMessage(message: validationMsg);
       return false;
     }
-    if (topicNameController.text.isNotEmpty && questions.length < 5) {
-      AppConstFunctions.customErrorMessage(
-          message: 'Minimum 5 questions are required to publish.');
-      return false;
-    }
+
+    _setLoading(true);
 
     final formattedQuestions = questions.map((question) {
       return {
@@ -45,78 +74,61 @@ class CreateQuizController extends GetxController {
     }).toList();
 
     final response = await FirebaseService().createQuiz(
-      classId: subjectDetailsController.classId,
-      subjectId: subjectDetailsController.subjectId,
-      topicName: topicNameController.text,
+      classId: _subjectDetailsController.classId,
+      subjectId: _subjectDetailsController.subjectId,
+      topicName: topicNameController.text.trim(),
       timeDuration: selectedDuration.toString(),
       endTime: endTimeController.text,
       questions: formattedQuestions,
-      subjectName: subjectDetailsController.subjectData.subjectName!
+      subjectName: _subjectDetailsController.subjectData.subjectName ?? 'Subject',
     );
 
-    if (response['success'] == true) {
-      AppConstFunctions.customSuccessMessage(message: response['message']);
-      _sendNotification();
-      Get.find<SubjectDetailsController>().refreshQuizzes();
-      return true;
+    final isSuccess = response['success'] == true;
+    final message = response['message'] ?? (isSuccess ? 'Quiz created' : 'Something went wrong');
+
+    if (isSuccess) {
+      AppConstFunctions.customSuccessMessage(message: message);
+      _subjectDetailsController.refreshQuizzes();
+      await _sendNotificationToStudents();
     } else {
-      AppConstFunctions.customErrorMessage(
-          message: response['message'] ?? 'Something went wrong');
-      return false;
+      AppConstFunctions.customErrorMessage(message: message);
     }
+
+    _setLoading(false);
+    return isSuccess;
   }
 
-  void pickEndDateTime(BuildContext context) async {
-    final selectedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
-
-    if (selectedDate != null) {
-      final selectedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
-
-      if (selectedTime != null) {
-        endTime = DateTime(
-          selectedDate.year,
-          selectedDate.month,
-          selectedDate.day,
-          selectedTime.hour,
-          selectedTime.minute,
-        );
-        endTimeController.text =
-            AppConstFunctions.formatDateTime(endTime!); // Format করে দেখাও
-        update();
-      }
+  String? _validateInput(List questions) {
+    if (topicNameController.text.trim().isEmpty) {
+      return 'Topic name cannot be empty.';
     }
+    if (questions.length < 5) {
+      return 'Minimum 5 questions are required to publish.';
+    }
+    return null;
   }
 
-  void _sendNotification() async {
-    final students = await FirebaseFirestore.instance
+  Future<void> _sendNotificationToStudents() async {
+    final studentsSnapshot = await FirebaseFirestore.instance
         .collection('classes')
-        .doc(subjectDetailsController.classId)
+        .doc(_subjectDetailsController.classId)
         .collection('users')
         .get();
 
-    print('📢 Found ${students.docs.length} students');
-
-    for (final doc in students.docs) {
+    for (final doc in studentsSnapshot.docs) {
       final token = doc.data()['fcmToken'];
-      print('🎯 Sending to token: $token');
-
-      if (token != null) {
+      if (token != null && token.toString().isNotEmpty) {
         await NotificationService().sendFcmHttpV1Notification(
           fcmToken: token,
           title: 'New Quiz Published!',
-          body: '📚 ${topicNameController.text} is now live. Take the quiz before time ends!',
+          body: '📚 ${topicNameController.text.trim()} is now live. Take the quiz before time ends!',
         );
-      } else {
-        print('❌ Token missing for user: ${doc.id}');
       }
     }
+  }
+
+  void _setLoading(bool value) {
+    isLoading = value;
+    update();
   }
 }

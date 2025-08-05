@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:teacher_panel/localizations/app_localization.dart';
-import 'package:teacher_panel/routes/app_pages.dart';
-import 'package:teacher_panel/themes/app_theme.dart';
-import 'package:teacher_panel/utils/app_initial_bindings.dart';
+import 'package:teacher_panel/bindings/initial_bindings.dart';
+import 'package:teacher_panel/config/localizations/app_localization.dart';
+import 'package:teacher_panel/config/routes/app_pages.dart';
+import 'package:teacher_panel/config/themes/app_theme.dart';
 
 class MyApp extends StatelessWidget {
 
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         fallbackLocale: const Locale('en', 'US'),
         initialRoute: initialRoute,
         getPages: AppPages.pages,
-        initialBinding: AppInitialBindings(),
+        initialBinding: InitialBindings(),
         theme: lightTheme,
         darkTheme: darkTheme,
       ),
