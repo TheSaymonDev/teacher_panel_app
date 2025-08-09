@@ -18,7 +18,7 @@ class ClassReportsAnalyticsScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBarWithTitle(
           onPressed: () => Get.back(),
-          title: 'Class ${_controller.className} ${'reports_analytics_title'.tr}'),
+          title: '${'class'.tr}: ${_controller.className} ${'reports_analytics_title'.tr}'),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: Column(

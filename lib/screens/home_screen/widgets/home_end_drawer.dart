@@ -13,9 +13,9 @@ class HomeEndDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          Gap(48.h),
+          Gap(120.h),
           const DrawerProfileSection(),
-          const Divider(),
+          Gap(24.h),
           const DrawerSettingsCard(),
           const Spacer(),
           const DrawerLogoutButton(),

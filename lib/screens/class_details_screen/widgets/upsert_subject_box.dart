@@ -10,17 +10,11 @@ import 'package:teacher_panel/core/widgets/custom_text_form_field.dart';
 import 'package:teacher_panel/screens/class_details_screen/controllers/upsert_subject_controller.dart';
 import 'package:teacher_panel/data/models/subject_model.dart';
 
-
 class UpsertSubjectBox extends StatefulWidget {
   final bool isUpdate;
-  final String classId;
   final SubjectModel? subjectData;
 
-  const UpsertSubjectBox(
-      {super.key,
-      this.isUpdate = false,
-      required this.classId,
-      this.subjectData});
+  const UpsertSubjectBox({super.key, this.isUpdate = false, this.subjectData});
 
   @override
   State<UpsertSubjectBox> createState() => _UpsertSubjectBoxState();
@@ -52,12 +46,12 @@ class _UpsertSubjectBoxState extends State<UpsertSubjectBox> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.isUpdate ? "Update Subject" : "Create Subject",
+                Text(widget.isUpdate ? "update_subject".tr : "create_subject".tr,
                     style: Theme.of(context).textTheme.titleMedium),
                 Gap(20.h),
                 CustomTextFormField(
                     controller: _upsertSubjectController.subjectNameController,
-                    hintText: 'Subject Name',
+                    hintText: 'subject_name'.tr,
                     validator: AppValidators.requiredValidator),
                 Gap(32.h),
                 GetBuilder<UpsertSubjectController>(
@@ -71,7 +65,7 @@ class _UpsertSubjectBoxState extends State<UpsertSubjectBox> {
                                     onPressed: () {
                                       Get.back();
                                     },
-                                    name: 'CANCEL'),
+                                    name: 'cancel'.tr),
                               ),
                               Gap(32.w),
                               Expanded(
@@ -79,8 +73,9 @@ class _UpsertSubjectBoxState extends State<UpsertSubjectBox> {
                                       onPressed: () {
                                         _formOnSubmit(controller, context);
                                       },
-                                      name:
-                                          widget.isUpdate ? 'UPDATE' : 'CREATE'))
+                                      name: widget.isUpdate
+                                          ? 'update'.tr
+                                          : 'create'.tr))
                             ],
                           )),
               ],
@@ -95,13 +90,13 @@ class _UpsertSubjectBoxState extends State<UpsertSubjectBox> {
       UpsertSubjectController controller, BuildContext context) async {
     if (controller.formKey.currentState!.validate()) {
       if (widget.isUpdate && widget.subjectData != null) {
-        final result = await controller.updateSubject(
-            classId: widget.classId, subjectId: widget.subjectData!.id!);
+        final result =
+            await controller.updateSubject(subjectId: widget.subjectData!.id!);
         if (result && context.mounted) {
           Navigator.of(context).pop();
         }
       } else {
-        final result = await controller.createSubject(classId: widget.classId);
+        final result = await controller.createSubject();
         if (result && context.mounted) {
           Navigator.of(context).pop();
         }

@@ -10,13 +10,13 @@ class ClassDetailsController extends GetxController {
   late final String classId;
 
   bool isLoading = false;
-  List<SubjectModel> subjects = [];
+  List<SubjectModel> subjectsData = [];
 
   double avgPerformance = 0;
   double avgParticipants = 0;
 
   final _firebaseService = FirebaseService();
-  final  _studentsInfoController = Get.find<StudentsInfoController>();
+  final _studentsInfoController = Get.find<StudentsInfoController>();
 
   @override
   void onInit() {
@@ -26,17 +26,12 @@ class ClassDetailsController extends GetxController {
     _loadInitialData();
   }
 
-  void _setLoading(bool value) {
-    isLoading = value;
-    update();
-  }
-
   void _loadInitialData() async {
     await _readSubjects();
-    calculateClassPerformance();
+    _calculateClassPerformance();
   }
 
-  Future<void> calculateClassPerformance() async {
+  Future<void> _calculateClassPerformance() async {
     final response = await _firebaseService.readAllQuizResultsForClass(classId);
 
     if (response['success'] == true) {
@@ -55,7 +50,9 @@ class ClassDetailsController extends GetxController {
         }
 
         avgPerformance = totalScore / results.length;
-        avgParticipants = (participants.length / _studentsInfoController.studentsInfo.length) * 100;
+        avgParticipants = (participants.length /
+                _studentsInfoController.studentsData.length) *
+            100;
       }
     } else {
       AppConstFunctions.customErrorMessage(
@@ -73,20 +70,17 @@ class ClassDetailsController extends GetxController {
 
     if (response['success'] == true) {
       final data = response['data'];
-      subjects = data.docs.map<SubjectModel>(
+      subjectsData = data.docs
+          .map<SubjectModel>(
             (doc) => SubjectModel.fromFireStore(doc.data(), doc.id),
-      ).toList();
-
-      if (subjects.isEmpty) {
-        AppConstFunctions.customErrorMessage(message: 'No subjects found');
-      }
+          )
+          .toList();
     } else {
       AppConstFunctions.customErrorMessage(
         message: response['message'] ?? 'Something went wrong',
       );
     }
   }
-
 
   Future<bool> deleteSubjectById({
     required String classId,
@@ -113,5 +107,10 @@ class ClassDetailsController extends GetxController {
 
   void refreshSubjects() {
     _readSubjects();
+  }
+
+  void _setLoading(bool value) {
+    isLoading = value;
+    update();
   }
 }

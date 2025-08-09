@@ -9,6 +9,7 @@ class UpsertClassController extends GetxController {
   final formKey = GlobalKey<FormState>();
   final classNameController = TextEditingController();
   final numOfStudentsController = TextEditingController();
+  final sectionController = TextEditingController();
 
   final _firebaseService = FirebaseService();
 
@@ -20,12 +21,14 @@ class UpsertClassController extends GetxController {
   void _clearFields() {
     classNameController.clear();
     numOfStudentsController.clear();
+    sectionController.clear();
   }
 
   Future<bool> createClass() async {
     _setLoading(true);
     final response = await _firebaseService.createClass(
       className: classNameController.text,
+      section: sectionController.text,
       numOfStudents: numOfStudentsController.text,
     );
     _setLoading(false);
@@ -67,6 +70,7 @@ class UpsertClassController extends GetxController {
   void onClose() {
     classNameController.dispose();
     numOfStudentsController.dispose();
+    sectionController.dispose();
     super.onClose();
   }
 }

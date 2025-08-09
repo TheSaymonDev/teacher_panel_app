@@ -45,7 +45,7 @@ class CustomPopUpMenu extends StatelessWidget {
                   ),
                   SizedBox(width: 6.w),
                   Text(
-                    'Update',
+                    'update'.tr,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -63,7 +63,7 @@ class CustomPopUpMenu extends StatelessWidget {
                   ),
                   SizedBox(width: 6.w),
                   Text(
-                    'Delete',
+                    'delete'.tr,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

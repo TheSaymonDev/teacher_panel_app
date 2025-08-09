@@ -21,13 +21,13 @@ class UpsertClassBox extends StatefulWidget {
 }
 
 class _UpsertClassBoxState extends State<UpsertClassBox> {
-  final _upsertClassController = Get.find<UpsertClassController>();
+  final _controller = Get.find<UpsertClassController>();
 
   @override
   void initState() {
     super.initState();
     if (widget.isUpdate && widget.classData != null) {
-     _assignData();
+      _assignData();
     }
   }
 
@@ -42,24 +42,29 @@ class _UpsertClassBoxState extends State<UpsertClassBox> {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 32.h),
         child: SingleChildScrollView(
           child: Form(
-            key: _upsertClassController.formKey,
+            key: _controller.formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.isUpdate ? "Update Class" : "Create Class",
+                Text(widget.isUpdate ? "update_class".tr : "create_class".tr,
                     style: Theme.of(context).textTheme.titleMedium),
                 Gap(20.h),
                 CustomTextFormField(
-                  controller: _upsertClassController.classNameController,
-                  hintText: 'Class Name',
+                  controller: _controller.classNameController,
+                  hintText: 'class_name'.tr,
                   validator: AppValidators.requiredValidator,
                 ),
                 Gap(16.h),
                 CustomTextFormField(
-                  controller: _upsertClassController.numOfStudentsController,
-                  hintText: 'Number of Students',
+                  controller: _controller.numOfStudentsController,
+                  hintText: 'number_of_students'.tr,
                   keyBoardType: TextInputType.number,
                   validator: AppValidators.requiredValidator,
+                ),
+                Gap(16.h),
+                CustomTextFormField(
+                  controller: _controller.sectionController,
+                  hintText: 'section_optional'.tr,
                 ),
                 Gap(32.h),
                 GetBuilder<UpsertClassController>(
@@ -72,7 +77,7 @@ class _UpsertClassBoxState extends State<UpsertClassBox> {
                             Expanded(
                               child: CustomOutlinedBtn(
                                 onPressed: () => Get.back(),
-                                name: 'CANCEL',
+                                name: 'cancel'.tr,
                               ),
                             ),
                             Gap(32.w),
@@ -81,7 +86,7 @@ class _UpsertClassBoxState extends State<UpsertClassBox> {
                                 onPressed: () {
                                   _formOnSubmit(controller, context);
                                 },
-                                name: widget.isUpdate ? 'UPDATE' : 'CREATE',
+                                name: widget.isUpdate ? 'update'.tr : 'create'.tr,
                               ),
                             ),
                           ],
@@ -114,9 +119,11 @@ class _UpsertClassBoxState extends State<UpsertClassBox> {
   }
 
   void _assignData() {
-    _upsertClassController.classNameController.text =
+    _controller.classNameController.text =
         widget.classData!.className ?? '';
-    _upsertClassController.numOfStudentsController.text =
+    _controller.numOfStudentsController.text =
         widget.classData!.numOfStudents ?? '';
+    _controller.sectionController.text =
+        widget.classData!.section ?? '';
   }
 }

@@ -13,15 +13,16 @@ class ProfileHeaderCard extends StatelessWidget {
     return CustomGradientContainer(
       child: GetBuilder<TeacherInfoController>(
         builder: (controller) {
-          final teacherInfo = controller.teacherInfo;
+          final teacherInfo = controller.teacherData;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'welcome_back'.tr,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Colors.white70,
-                    ),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(color: Colors.white),
               ),
               Gap(4.h),
               Text(
@@ -38,9 +39,10 @@ class ProfileHeaderCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       teacherInfo.schoolName ?? '',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: Colors.white70,
-                          ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Colors.white),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

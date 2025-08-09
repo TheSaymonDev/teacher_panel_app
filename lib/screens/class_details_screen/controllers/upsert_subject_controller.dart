@@ -8,7 +8,7 @@ class UpsertSubjectController extends GetxController {
   bool isLoading = false;
   final formKey = GlobalKey<FormState>();
   final subjectNameController = TextEditingController();
-
+  final _classDetailsController = Get.find<ClassDetailsController>();
   final _firebaseService = FirebaseService();
 
   void _setLoading(bool value) {
@@ -20,18 +20,19 @@ class UpsertSubjectController extends GetxController {
     subjectNameController.clear();
   }
 
-  Future<bool> createSubject({required String classId}) async {
+  Future<bool> createSubject() async {
     _setLoading(true);
     final response = await _firebaseService.createSubject(
-      classId: classId,
+      classId: _classDetailsController.classData.id ?? '',
       subjectName: subjectNameController.text,
+      className: _classDetailsController.classData.className ?? '',
     );
     _setLoading(false);
 
     if (response['success'] == true) {
       AppConstFunctions.customSuccessMessage(message: response['message']);
       _clearFields();
-      Get.find<ClassDetailsController>().refreshSubjects();
+      _classDetailsController.refreshSubjects();
       return true;
     } else {
       AppConstFunctions.customErrorMessage(
@@ -42,12 +43,11 @@ class UpsertSubjectController extends GetxController {
   }
 
   Future<bool> updateSubject({
-    required String classId,
     required String subjectId,
   }) async {
     _setLoading(true);
     final response = await _firebaseService.updateSubject(
-      classId: classId,
+      classId: _classDetailsController.classData.id ?? '',
       subjectId: subjectId,
       subjectName: subjectNameController.text,
     );
@@ -56,7 +56,7 @@ class UpsertSubjectController extends GetxController {
     if (response['success'] == true) {
       AppConstFunctions.customSuccessMessage(message: response['message']);
       _clearFields();
-      Get.find<ClassDetailsController>().refreshSubjects();
+      _classDetailsController.refreshSubjects();
       return true;
     } else {
       AppConstFunctions.customErrorMessage(

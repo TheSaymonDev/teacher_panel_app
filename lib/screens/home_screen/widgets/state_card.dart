@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 
 class StateCard extends StatelessWidget {
@@ -23,7 +24,7 @@ class StateCard extends StatelessWidget {
             children: [
               Text(value, style: Theme.of(context).textTheme.titleLarge),
               Gap(8.h),
-              Text('Total\n$title',
+              Text('${'total'.tr}\n$title',
                   style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center),
             ],

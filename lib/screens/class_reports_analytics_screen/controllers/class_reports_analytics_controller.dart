@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:teacher_panel/data/services/firebase_service.dart';
 import 'package:teacher_panel/core/utils/app_const_functions.dart';
 import 'package:teacher_panel/screens/class_reports_analytics_screen/models/subject_wised_performance_model.dart';
-import 'package:teacher_panel/screens/subject_details_screen/models/quiz_model.dart';
+import 'package:teacher_panel/data/models/quiz_model.dart';
 
 class ClassReportsAnalyticsController extends GetxController {
   late String className;
@@ -12,7 +12,7 @@ class ClassReportsAnalyticsController extends GetxController {
   int totalQuizzesTaken = 0;
   bool isLoading = false;
 
-  List<QuizModel> quizzes = [];
+  List<QuizModel> quizzesData = [];
   List<SubjectWisedPerformanceModel> subjectWisedData = [];
 
   final FirebaseService _firebaseService = FirebaseService();
@@ -92,7 +92,7 @@ class ClassReportsAnalyticsController extends GetxController {
 
     final subjectDocs = subjectResponse['data'].docs;
     if (subjectDocs.isEmpty) {
-      AppConstFunctions.customErrorMessage(message: 'No subject found');
+      AppConstFunctions.customErrorMessage(message: 'No subject found!');
       _setLoading(false);
       return;
     }

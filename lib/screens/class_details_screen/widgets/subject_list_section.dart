@@ -17,36 +17,32 @@ class SubjectListSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ClassDetailsController>(
-      builder: (controller) {
-        if (controller.isLoading) {
-          return AppConstFunctions.customCircularProgressIndicator;
-        } else if (controller.subjects.isEmpty) {
-          return CustomEmptyWidget(title: 'no_subject_added'.tr);
-        } else {
-          return ListView.separated(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: controller.subjects.length,
-            itemBuilder: (_, index) {
-              final subject = controller.subjects[index];
-              return CustomListTile(
-                title: subject.subjectName ?? '',
-                subTitle: 'status_active'.tr,
-                onTap: () =>
-                    Get.toNamed(AppRoutes.subjectDetailsScreen, arguments: {
-                  'classData': _controller.classData,
-                  'subjectData': subject,
-                }),
-                trailing: CustomPopUpMenu(
-                  onUpdate: () => _showUpsertSubject(context, subject),
-                  onDelete: () => _confirmDelete(context, subject.id!),
+      builder: (controller) => controller.isLoading
+          ? AppConstFunctions.customCircularProgressIndicator
+          : controller.subjectsData.isEmpty
+              ? CustomEmptyWidget(title: 'no_subject_added'.tr)
+              : ListView.separated(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: controller.subjectsData.length,
+                  itemBuilder: (_, index) {
+                    final subject = controller.subjectsData[index];
+                    return CustomListTile(
+                      title: subject.subjectName ?? '',
+                      subTitle: 'status_active'.tr,
+                      onTap: () => Get.toNamed(AppRoutes.subjectDetailsScreen,
+                          arguments: {
+                            'classData': _controller.classData,
+                            'subjectData': subject,
+                          }),
+                      trailing: CustomPopUpMenu(
+                        onUpdate: () => _showUpsertSubject(context, subject),
+                        onDelete: () => _confirmDelete(context, subject.id!),
+                      ),
+                    );
+                  },
+                  separatorBuilder: (_, __) => Gap(8.h),
                 ),
-              );
-            },
-            separatorBuilder: (_, __) => Gap(8.h),
-          );
-        }
-      },
     );
   }
 
@@ -58,7 +54,6 @@ class SubjectListSection extends StatelessWidget {
           borderRadius: BorderRadius.vertical(top: Radius.circular(12.r))),
       builder: (_) => UpsertSubjectBox(
         isUpdate: true,
-        classId: _controller.classId,
         subjectData: subject,
       ),
     );

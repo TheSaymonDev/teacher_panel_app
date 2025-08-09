@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:teacher_panel/data/models/subject_model.dart';
 import 'package:teacher_panel/data/models/class_model.dart';
-import 'package:teacher_panel/screens/subject_details_screen/models/quiz_model.dart';
+import 'package:teacher_panel/data/models/quiz_model.dart';
 import 'package:teacher_panel/data/services/firebase_service.dart';
 import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
@@ -11,7 +11,7 @@ class SubjectDetailsController extends GetxController {
   late String classId;
   late String subjectId;
   bool isLoading = false;
-  List<QuizModel> quizzes = [];
+  List<QuizModel> quizzesData = [];
 
   Future<bool> _readQuizzes({
     required String classId,
@@ -26,7 +26,7 @@ class SubjectDetailsController extends GetxController {
     if (response['success'] == true) {
       final data = response['data'];
       if (data.docs.isNotEmpty) {
-        quizzes = data.docs.map<QuizModel>((doc) {
+        quizzesData = data.docs.map<QuizModel>((doc) {
           return QuizModel.fromFireStore(
             doc.data(),
             doc.id,
@@ -34,8 +34,7 @@ class SubjectDetailsController extends GetxController {
         }).toList();
         return true;
       } else {
-        quizzes = [];
-        AppConstFunctions.customErrorMessage(message: 'No quiz found');
+        quizzesData = [];
         return false;
       }
     } else {
@@ -57,7 +56,7 @@ class SubjectDetailsController extends GetxController {
     );
     if (response['success'] == true) {
       AppConstFunctions.customSuccessMessage(message: response['message']);
-      _readQuizzes(classId: classId, subjectId: subjectId);
+      refreshQuizzes();
       return true;
     } else {
       AppConstFunctions.customErrorMessage(

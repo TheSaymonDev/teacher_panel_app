@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:teacher_panel/data/models/teacher_info_model.dart';
+import 'package:teacher_panel/data/models/teacher_model.dart';
 import 'package:teacher_panel/data/services/firebase_service.dart';
 
 class TeacherInfoController extends GetxController {
-  TeacherInfoModel teacherInfo = TeacherInfoModel.defaultData();
+  TeacherModel teacherData = TeacherModel.defaultData();
   final _firebaseService = FirebaseService();
 
   @override
@@ -22,7 +22,7 @@ class TeacherInfoController extends GetxController {
 
       if (docs.isNotEmpty) {
         final doc = docs.first;
-        teacherInfo = TeacherInfoModel.fromFireStore(
+        teacherData = TeacherModel.fromFireStore(
           doc.data() as Map<String, dynamic>,
           doc.id,
         );

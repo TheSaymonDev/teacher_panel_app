@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:teacher_panel/data/models/teacher_info_model.dart';
+import 'package:teacher_panel/data/models/teacher_model.dart';
 import 'package:teacher_panel/data/services/firebase_service.dart';
 import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
@@ -13,15 +13,15 @@ class UpsertProfileController extends GetxController {
   bool isLoading = false;
   bool isEditMode = false;
   final formKey = GlobalKey<FormState>();
-  late TeacherInfoModel teacherInfo;
+  late TeacherModel teacherData;
 
   @override
   void onInit() {
     super.onInit();
-    teacherInfo = Get.arguments['teacherInfo'] as TeacherInfoModel;
-    nameController.text = teacherInfo.fullName ?? '';
-    schoolNameController.text = teacherInfo.schoolName ?? '';
-    if (teacherInfo.id != null) {
+    teacherData = Get.arguments['teacherInfo'] as TeacherModel;
+    nameController.text = teacherData.fullName ?? '';
+    schoolNameController.text = teacherData.schoolName ?? '';
+    if (teacherData.id != null) {
       isEditMode = true;
     }
   }
@@ -44,7 +44,7 @@ class UpsertProfileController extends GetxController {
     final firebaseService = FirebaseService();
     final response = isEditMode
         ? await firebaseService.updateTeacherInfo(
-            docId: teacherInfo.id!,
+            docId: teacherData.id!,
             fullName: nameController.text,
             schoolName: schoolNameController.text,
             profileImage: selectedImage,

@@ -9,9 +9,9 @@ import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
 class ViewReportsController extends GetxController {
   // Filters
-  late List<ClassModel> classes;
+  late List<ClassModel> classesData;
   String? selectedClass;
-  List<SubjectModel> subjects = [];
+  List<SubjectModel> subjectsData = [];
   String? selectedSubject;
   final List<DateRange> dateRanges = [
     DateRange(title: 'Today', value: 'today'),
@@ -31,7 +31,7 @@ class ViewReportsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    classes = Get.arguments['classes'] as List<ClassModel>;
+    classesData = Get.arguments['classes'] as List<ClassModel>;
   }
 
   void _setLoading(bool value) {
@@ -44,15 +44,15 @@ class ViewReportsController extends GetxController {
     selectedClass = className;
     selectedSubject = null;
 
-    final classId = classes.firstWhere((cls) => cls.className == className).id;
+    final classId = classesData.firstWhere((cls) => cls.className == className).id;
     final response = await FirebaseService().readSubjects(classId: classId!);
 
     if (response['success'] == true && response['data'].docs.isNotEmpty) {
-      subjects = response['data'].docs.map<SubjectModel>((doc) {
+      subjectsData = response['data'].docs.map<SubjectModel>((doc) {
         return SubjectModel.fromFireStore(doc.data(), doc.id);
       }).toList();
     } else {
-      subjects = [];
+      subjectsData = [];
     }
 
     update();
@@ -75,7 +75,7 @@ class ViewReportsController extends GetxController {
     _setLoading(true);
 
     final classId =
-        classes.firstWhere((cls) => cls.className == selectedClass).id!;
+        classesData.firstWhere((cls) => cls.className == selectedClass).id!;
     final response = await _firebaseService.readQuizReportData(
       classId: classId,
       subjectName: selectedSubject!,

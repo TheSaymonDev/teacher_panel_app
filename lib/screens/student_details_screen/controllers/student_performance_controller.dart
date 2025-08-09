@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
-import 'package:teacher_panel/data/models/student_info_model.dart';
+import 'package:teacher_panel/data/models/student_model.dart';
 import 'package:teacher_panel/data/services/firebase_service.dart';
 import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
 class StudentPerformanceController extends GetxController {
-  late StudentInfoModel student;
+  late StudentModel studentData;
+  late String classId;
   double averageScore = 0;
   int totalQuizAttempted = 0;
   String bestPerformingSubject = '';
@@ -15,8 +16,8 @@ class StudentPerformanceController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    student = Get.arguments['student'] as StudentInfoModel;
-    final classId = Get.arguments['classId'];
+    studentData = Get.arguments['student'] as StudentModel;
+    classId = studentData.classId ?? '';
     _calculatePerformanceOverview(classId: classId);
   }
 
@@ -25,7 +26,7 @@ class StudentPerformanceController extends GetxController {
 
     final response = await _firebaseService.readQuizResultsForStudent(
       classId: classId,
-      userId: student.userId!,
+      userId: studentData.userId!,
     );
 
     if (response['success'] != true) {

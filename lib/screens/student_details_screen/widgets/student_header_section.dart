@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:teacher_panel/core/utils/app_urls.dart';
 import 'package:teacher_panel/screens/student_details_screen/controllers/student_performance_controller.dart';
 
 class StudentHeaderSection extends StatelessWidget {
@@ -17,9 +19,10 @@ class StudentHeaderSection extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 35.r,
-              backgroundImage: NetworkImage(
-                'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D', // Replace with student's image URL
-              ),
+              backgroundImage: (_controller.studentData.imageUrl == null ||
+                  _controller.studentData.imageUrl!.isEmpty)
+                  ? AssetImage(AppUrls.demoProfile) as ImageProvider
+                  : MemoryImage(base64Decode(_controller.studentData.imageUrl!)),
               backgroundColor: Colors.grey.shade200,
             ),
             Gap(16.w),
@@ -28,7 +31,7 @@ class StudentHeaderSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _controller.student.name ?? '',
+                    _controller.studentData.studentName ?? '',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Gap(4.h),
@@ -37,7 +40,7 @@ class StudentHeaderSection extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   Text(
-                    _controller.student.className ?? '',
+                    _controller.studentData.className ?? '',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],

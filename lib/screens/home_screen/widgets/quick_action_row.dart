@@ -33,7 +33,7 @@ class QuickActionRow extends StatelessWidget {
           onTap: () => Get.toNamed(
             AppRoutes.viewReportsScreen,
             arguments: {
-              'classes': Get.find<ManageClassController>().classes,
+              'classes': Get.find<ManageClassController>().classesData,
             },
           ),
           title: 'view_reports'.tr,

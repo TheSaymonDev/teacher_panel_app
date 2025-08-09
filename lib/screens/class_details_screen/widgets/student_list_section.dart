@@ -15,19 +15,19 @@ class StudentListSection extends StatelessWidget {
     return GetBuilder<StudentsInfoController>(
         builder: (controller) => controller.isLoading
             ? AppConstFunctions.customCircularProgressIndicator
-            : controller.studentsInfo.isEmpty
+            : controller.studentsData.isEmpty
                 ? CustomEmptyWidget(title: 'no_student_found'.tr)
                 : ListView.separated(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: controller.studentsInfo.length,
+                    itemCount: controller.studentsData.length,
                     itemBuilder: (context, index) {
-                      final student = controller.studentsInfo[index];
+                      final student = controller.studentsData[index];
                       return ListTile(
                         leading: CircleAvatar(
                             child: Text('${index + 1}',
                                 style: Theme.of(context).textTheme.titleSmall)),
-                        title: Text(student.name ?? '',
+                        title: Text(student.studentName ?? '',
                             style: Theme.of(context).textTheme.bodyMedium),
                         trailing: Icon(
                           Icons.arrow_forward,
@@ -36,7 +36,6 @@ class StudentListSection extends StatelessWidget {
                         onTap: () => Get.toNamed(AppRoutes.studentDetailsScreen,
                             arguments: {
                               'student': student,
-                              'classId': controller.classId
                             }),
                       );
                     },

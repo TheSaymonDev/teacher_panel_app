@@ -39,7 +39,7 @@ class ClassHeaderSection extends StatelessWidget {
                     Icon(Icons.book, size: 20.sp, color: Colors.white),
                     Gap(8.w),
                     GetBuilder<ClassDetailsController>(builder: (controller) {
-                      return Text('subjects_count ${controller.subjects.length}'.tr,
+                      return Text('${'subjects_count'.tr} ${controller.subjectsData.length}',
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium!
@@ -52,7 +52,7 @@ class ClassHeaderSection extends StatelessWidget {
                   children: [
                     Icon(Icons.group, size: 20.sp, color: Colors.white),
                     Gap(8.w),
-                    Text('students_count ${_controller.classData.numOfStudents}'.tr,
+                    Text('${'students_count'.tr} ${_controller.classData.numOfStudents}',
                         style: Theme.of(context)
                             .textTheme
                             .bodyMedium!

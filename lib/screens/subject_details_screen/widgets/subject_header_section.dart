@@ -43,7 +43,7 @@ class SubjectHeaderSection extends StatelessWidget {
                 Icon(Icons.quiz, size: 20.sp, color: Colors.white),
                 Gap(8.w),
                 Text(
-                  "${'total_quizzes'.tr}: ${controller.quizzes.length}",
+                  "${'total_quizzes'.tr}: ${controller.quizzesData.length}",
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium

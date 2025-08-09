@@ -29,7 +29,7 @@ class DrawerSettingsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text('Theme', style: Theme.of(context).textTheme.bodyMedium),
+              Text('theme'.tr, style: Theme.of(context).textTheme.bodyMedium),
               const Spacer(),
               GetBuilder<ThemeController>(
                 builder: (controller) => CustomSwitch(
@@ -46,7 +46,7 @@ class DrawerSettingsCard extends StatelessWidget {
           Divider(color: AppColors.lightGreyClr),
           Row(
             children: [
-              Text('Language', style: Theme.of(context).textTheme.bodyMedium),
+              Text('language'.tr, style: Theme.of(context).textTheme.bodyMedium),
               const Spacer(),
               GetBuilder<LanguageController>(
                 builder: (controller) => CustomSwitch(

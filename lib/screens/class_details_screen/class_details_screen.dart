@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gap/gap.dart';
 import 'package:teacher_panel/core/widgets/custom_app_bar_with_title.dart';
-import 'package:teacher_panel/screens/class_details_screen/controllers/class_details_controller.dart';
 import 'package:teacher_panel/screens/class_details_screen/widgets/class_header_section.dart';
 import 'package:teacher_panel/screens/class_details_screen/widgets/leaderboard_card_section.dart';
 import 'package:teacher_panel/screens/class_details_screen/widgets/reports_card_section.dart';
@@ -12,8 +11,7 @@ import 'package:teacher_panel/screens/class_details_screen/widgets/subject_list_
 import 'package:teacher_panel/screens/class_details_screen/widgets/upsert_subject_box.dart';
 
 class ClassDetailsScreen extends StatelessWidget {
-  ClassDetailsScreen({super.key});
-  final _controller = Get.find<ClassDetailsController>();
+  const ClassDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +62,6 @@ class ClassDetailsScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(12.r))),
       builder: (_) => UpsertSubjectBox(
         isUpdate: subject != null,
-        classId: _controller.classId,
         subjectData: subject,
       ),
     );

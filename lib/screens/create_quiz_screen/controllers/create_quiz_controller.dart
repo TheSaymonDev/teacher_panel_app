@@ -77,10 +77,11 @@ class CreateQuizController extends GetxController {
       classId: _subjectDetailsController.classId,
       subjectId: _subjectDetailsController.subjectId,
       topicName: topicNameController.text.trim(),
+      subjectName: _subjectDetailsController.subjectData.subjectName ?? '',
+      className: _subjectDetailsController.subjectData.className ?? '',
       timeDuration: selectedDuration.toString(),
       endTime: endTimeController.text,
       questions: formattedQuestions,
-      subjectName: _subjectDetailsController.subjectData.subjectName ?? 'Subject',
     );
 
     final isSuccess = response['success'] == true;

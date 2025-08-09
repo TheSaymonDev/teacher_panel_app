@@ -62,17 +62,19 @@ class FirebaseService {
   /// Creates a new class in Firestore
   Future<Map<String, dynamic>> createClass({
     required String className,
+    required String section,
     required String numOfStudents,
   }) async {
     try {
-      final docRef = await _firestore.collection("classes").add({
+      final classRef = await _firestore.collection("classes").add({
         'className': className,
+        'section': section,
         'numOfStudents': numOfStudents,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
-
-      AppLogger.logInfo('Class created with ID: ${docRef.id}');
+      await classRef.update({'classId': classRef.id});
+      AppLogger.logInfo('Class created with ID: ${classRef.id}');
       return {
         'success': true,
         'message': 'Class created successfully',
@@ -180,23 +182,25 @@ class FirebaseService {
   Future<Map<String, dynamic>> createSubject({
     required String classId,
     required String subjectName,
+    required String className,
   }) async {
     try {
-      final docRef = await _firestore
+      final subjectRef = await _firestore
           .collection("classes")
           .doc(classId)
           .collection("subjects")
           .add({
         'subjectName': subjectName,
+        'className': className,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
-
-      AppLogger.logInfo('Subject created with ID: ${docRef.id}');
+      await subjectRef.update({'subjectId': subjectRef.id});
+      AppLogger.logInfo('Subject created with ID: ${subjectRef.id}');
       return {
         'success': true,
         'message': 'Subject created successfully',
-        'docId': docRef.id,
+        'docId': subjectRef.id,
       };
     } catch (e) {
       AppLogger.logError('Subject creation failed: $e');
@@ -325,10 +329,11 @@ class FirebaseService {
     required String classId,
     required String subjectId,
     required String topicName,
+    required String subjectName,
+    required String className,
     required String timeDuration, // in minutes
     required String endTime,
     required List<Map<String, dynamic>> questions,
-    required String subjectName,
   }) async {
     try {
       final quizRef = await _firestore
@@ -339,10 +344,11 @@ class FirebaseService {
           .collection("quizzes")
           .add({
         'topicName': topicName,
+        'subjectName': subjectName,
+        'className': className,
         'timeDuration': timeDuration,
         'endTime': endTime,
         'questions': questions,
-        'subjectName': subjectName,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -412,8 +418,8 @@ class FirebaseService {
         'topicName': topicName,
         'timeDuration': timeDuration,
         'questions': questions,
-        'updatedAt': FieldValue.serverTimestamp(),
         'subjectName': subjectName,
+        'updatedAt': FieldValue.serverTimestamp(),
       });
       AppLogger.logInfo('Quiz $quizId updated successfully');
       return {
@@ -729,6 +735,7 @@ class FirebaseService {
       for (final userDoc in usersSnapshot.docs) {
         final userId = userDoc.id;
         final username = userDoc.data()['name'] ?? 'Unknown';
+        final imageUrl = userDoc.data()['imageUrl'] ?? '';
 
         AppLogger.logDebug('Processing user: $username ($userId)');
 
@@ -754,6 +761,7 @@ class FirebaseService {
         leaderboard.add(LeaderboardUserModel(
           userId: userId,
           username: username,
+          imageUrl: imageUrl,
           totalScore: totalScore.toInt(),
         ));
       }
@@ -796,6 +804,7 @@ class FirebaseService {
         'schoolName': schoolName,
         'imageUrl': base64Image,
         'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
       });
       AppLogger.logInfo('Teacher profile created successfully');
       return {
@@ -848,7 +857,7 @@ class FirebaseService {
       final Map<String, dynamic> updatedData = {
         'fullName': fullName,
         'schoolName': schoolName,
-        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
       };
 
       // Only add imageUrl if new image is provided

@@ -1,5 +1,5 @@
 final Map<String, String> bnBd = {
-  /// for home screen
+    /// for home screen
     'dashboard': 'ড্যাশবোর্ড',
     'your_classes': 'আপনার ক্লাসসমূহ',
     'quick_actions': 'দ্রুত কাজ',
@@ -14,5 +14,120 @@ final Map<String, String> bnBd = {
     'no_class_added': 'কোন ক্লাস যোগ করা হয়নি!',
     'total_student': 'মোট শিক্ষার্থী',
     'create_class': 'ক্লাস তৈরি করুন',
-    'view_reports': 'রিপোর্ট দেখুন'
+    'view_reports': 'রিপোর্ট দেখুন',
+    'update_class': 'ক্লাস আপডেট করুন',
+    'class_name': 'ক্লাসের নাম',
+    'number_of_students': 'শিক্ষার্থীর সংখ্যা',
+    'section_optional': 'সেকশন (ঐচ্ছিক)',
+    'update': 'আপডেট',
+    'create': 'তৈরি করুন',
+    'total': 'মোট',
+    'john_doe': 'জন ডো',
+    'abc_school': 'এবিসি স্কুল অ্যান্ড কলেজ',
+    'logout': 'লগআউট',
+    'edit': 'ইডিট',
+    'theme': 'থিম',
+    'language': 'ভাষা',
+
+    /// for class details screen
+    'class_details': 'ক্লাস বিস্তারিত',
+    'reports_analytics': 'রিপোর্ট ও বিশ্লেষণ',
+    'unnamed_class': 'নামবিহীন ক্লাস',
+    'subjects_count': 'বিষয়:',
+    'students_count': 'শিক্ষার্থী:',
+    'no_subject_added': 'কোন বিষয় যোগ করা হয়নি!',
+    'status_active': 'স্ট্যাটাস: সক্রিয়',
+    'delete_subject_confirmation': 'আপনি কি নিশ্চিত যে আপনি এই বিষয়টি মুছে ফেলতে চান?',
+    'average_performance': 'গড় পারফরম্যান্স',
+    'average_participants': 'গড় অংশগ্রহণকারী',
+    'leaderboard': 'লিডারবোর্ড',
+    'see_top_performing_students': 'সেরা পারফর্মিং শিক্ষার্থীদের দেখুন',
+    'no_student_found': 'কোন শিক্ষার্থী পাওয়া যায়নি!',
+    'update_subject': 'বিষয় আপডেট করুন',
+    'create_subject': 'বিষয় তৈরি করুন',
+    'subject_name': 'বিষয়ের নাম',
+    'class': 'ক্লাস',
+
+    /// for class reports & analytics screen
+    'reports_analytics_title': 'রিপোর্ট ও বিশ্লেষণ',
+    'overall_performance': 'সামগ্রিক পারফরম্যান্স',
+    'subject_wise_performance': 'বিষয়ভিত্তিক পারফরম্যান্স',
+    'total_quizzes': 'মোট কুইজ',
+    'taken_quizzes': 'নেয়া কুইজ',
+    'total_quizzes_taken': 'মোট কুইজ নেয়া হয়েছে',
+    'no_subject_wise_performance': 'কোন বিষয়ভিত্তিক পারফরম্যান্স নেই',
+
+    /// for create quiz screen
+    'questions': 'প্রশ্নসমূহ',
+    'publish': 'প্রকাশ করুন',
+    'confirm_publish': 'প্রকাশ নিশ্চিত করুন',
+    'confirm_publish_message': 'আপনি কি নিশ্চিত যে আপনি এই কুইজটি প্রকাশ করতে চান?',
+    'confirm': 'নিশ্চিত করুন',
+    'saved_quiz_found': 'সংরক্ষিত কুইজ পাওয়া গেছে!',
+    'saved_quiz_found_message': 'আপনার সংরক্ষিত ডেটা আছে। আপনি কি এটি লোড করতে চান?',
+    'discard': 'বাতিল করুন',
+    'load': 'লোড করুন',
+    'no_questions_available': 'কোন প্রশ্ন পাওয়া যায়নি!',
+    'topic_name': 'টপিকের নাম',
+    'time': 'সময়',
+    'minutes': 'মিনিট',
+    'select_end_time': 'শেষ সময় নির্বাচন করুন',
+    'add_question': 'প্রশ্ন যোগ করুন',
+    'update_question': 'প্রশ্ন আপডেট করুন',
+    'question': 'প্রশ্ন',
+    'option': 'অপশন',
+    'choose_correct_answer': 'সঠিক উত্তর নির্বাচন করুন',
+    'save': 'সংরক্ষণ করুন',
+
+    /// for leaderboard screen
+    'today': 'আজ',
+    'week': 'সপ্তাহ',
+    'month': 'মাস',
+    'no_more_users': 'আর কোন ব্যবহারকারী নেই!',
+
+    /// for login screen
+    'email_address': 'ইমেইল ঠিকানা',
+    'password': 'পাসওয়ার্ড',
+    'login': 'লগইন',
+    'educora': 'এডুকোরা',
+    'online_learning_platform': 'অনলাইন লার্নিং প্ল্যাটফর্ম',
+
+    /// for profile update screen
+    'profile_update': 'প্রোফাইল আপডেট',
+    'full_name': 'পুরো নাম',
+    'school_name': 'স্কুলের নাম',
+    'done': 'সম্পন্ন',
+
+    /// for student details screen
+    'student_details': 'শিক্ষার্থীর বিস্তারিত',
+    'performance_overview': 'পারফরম্যান্স ওভারভিউ',
+    'subject_reports': 'বিষয় রিপোর্ট',
+    'class_roll': 'ক্লাস রোল',
+    'average_score': 'গড় স্কোর',
+    'total_quizzes_attempted': 'মোট কুইজের প্রচেষ্টা',
+    'best_performing_subject': 'সেরা পারফর্মিং বিষয়',
+    'topics': 'টপিক্স',
+
+    /// for subject details screen
+    'subject_details': 'বিষয় বিস্তারিত',
+    'create_quiz': 'কুইজ তৈরি করুন',
+    'quizzes': 'কুইজসমূহ',
+    'class_label': 'ক্লাস',
+    'no_quiz_added': 'কোন কুইজ যোগ করা হয়নি!',
+    'date_label': 'তারিখ',
+    'delete_quiz_confirmation': 'আপনি কি নিশ্চিত যে আপনি এই কুইজটি মুছে ফেলতে চান?',
+
+    /// for view reports screen
+    'filter': 'ফিল্টার',
+    'analytics_overview': 'বিশ্লেষণ ওভারভিউ',
+    'select_class': 'ক্লাস নির্বাচন করুন',
+    'class_required': 'ক্লাস প্রয়োজন',
+    'select_subject': 'বিষয় নির্বাচন করুন',
+    'subject_required': 'বিষয় প্রয়োজন',
+    'select_range': 'রেঞ্জ নির্বাচন করুন',
+    'range_required': 'রেঞ্জ প্রয়োজন',
+    'no_reports_available': 'কোন রিপোর্ট পাওয়া যায়নি!',
+
+    /// for common widgets
+    'write_here': 'এখানে লিখুন',
 };

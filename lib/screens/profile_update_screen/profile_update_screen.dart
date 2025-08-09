@@ -64,7 +64,7 @@ class ProfileUpdateScreen extends StatelessWidget {
       builder: (controller) {
         Widget buildProfileImage() {
           final selectedImage = controller.selectedImage;
-          final imageUrl = controller.teacherInfo.imageUrl;
+          final imageUrl = controller.teacherData.imageUrl;
 
           return selectedImage != null
               ? Image.file(selectedImage, fit: BoxFit.cover)

@@ -7,7 +7,7 @@ import 'package:teacher_panel/core/utils/app_const_functions.dart';
 import 'package:teacher_panel/core/widgets/custom_empty_widget.dart';
 import 'package:teacher_panel/core/widgets/custom_expansion_tile.dart';
 import 'package:teacher_panel/screens/subject_details_screen/controllers/subject_details_controller.dart';
-import 'package:teacher_panel/screens/subject_details_screen/models/quiz_model.dart';
+import 'package:teacher_panel/data/models/quiz_model.dart';
 import 'package:teacher_panel/screens/subject_details_screen/widgets/option_tile.dart';
 
 class QuizListSection extends StatelessWidget {
@@ -20,14 +20,12 @@ class QuizListSection extends StatelessWidget {
     return GetBuilder<SubjectDetailsController>(
       builder: (controller) => controller.isLoading
           ? AppConstFunctions.customCircularProgressIndicator
-          : controller.quizzes.isEmpty
+          : controller.quizzesData.isEmpty
               ? CustomEmptyWidget(title: 'no_quiz_added'.tr)
               : ListView.separated(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: controller.quizzes.length,
+                  itemCount: controller.quizzesData.length,
                   itemBuilder: (context, index) {
-                    final quizItem = controller.quizzes[index];
+                    final quizItem = controller.quizzesData[index];
                     return CustomExpansionTile(
                         title: quizItem.topicName ?? '',
                         subTitle:

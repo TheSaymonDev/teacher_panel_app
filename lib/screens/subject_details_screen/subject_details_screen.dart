@@ -20,22 +20,20 @@ class SubjectDetailsScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Gap(16.h),
-              SubjectHeaderSection(),
-              Gap(16.h),
-              CustomElevatedBtn(
-                  onPressed: () => Get.toNamed(AppRoutes.createQuizScreen),
-                  name: 'create_quiz'.tr),
-              Gap(16.h),
-              Text("quizzes".tr, style: Theme.of(context).textTheme.titleMedium),
-              Gap(8.h),
-              QuizListSection()
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Gap(16.h),
+            SubjectHeaderSection(),
+            Gap(16.h),
+            CustomElevatedBtn(
+                onPressed: () => Get.toNamed(AppRoutes.createQuizScreen),
+                name: 'create_quiz'.tr),
+            Gap(16.h),
+            Text("quizzes".tr, style: Theme.of(context).textTheme.titleMedium),
+            Gap(8.h),
+            Expanded(child: QuizListSection())
+          ],
         ),
       ),
     );

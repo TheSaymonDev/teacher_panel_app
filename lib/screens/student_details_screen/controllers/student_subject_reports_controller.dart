@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
-import 'package:teacher_panel/data/models/student_info_model.dart';
+import 'package:teacher_panel/data/models/student_model.dart';
 import 'package:teacher_panel/data/services/firebase_service.dart';
 import 'package:teacher_panel/screens/student_details_screen/models/student_subject_reports_model.dart';
 import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
 class StudentSubjectReportsController extends GetxController {
-  late StudentInfoModel student;
+  late StudentModel studentData;
+  late String classId;
   List<StudentSubjectReportsModel> subjectReports = [];
   bool isLoading = false;
 
@@ -14,8 +15,8 @@ class StudentSubjectReportsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    student = Get.arguments['student'] as StudentInfoModel;
-    final classId = Get.arguments['classId'];
+    studentData = Get.arguments['student'] as StudentModel;
+    classId = studentData.classId ?? '';
     _calculateSubjectReports(classId: classId);
   }
 
@@ -24,7 +25,7 @@ class StudentSubjectReportsController extends GetxController {
 
     final resultResponse = await _firebaseService.readQuizResultsForStudent(
       classId: classId,
-      userId: student.userId!,
+      userId: studentData.userId!,
     );
 
     if (resultResponse['success'] != true) {

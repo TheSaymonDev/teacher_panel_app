@@ -37,7 +37,7 @@ class CustomTextFormField extends StatelessWidget {
       keyboardType: keyBoardType,
       maxLines: maxLines ?? 1,
       decoration: InputDecoration(
-        hintText: hintText ?? 'writeHere'.tr,
+        hintText: hintText ?? 'write_here'.tr,
         suffixIcon: suffixIcon,
         contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
       ),

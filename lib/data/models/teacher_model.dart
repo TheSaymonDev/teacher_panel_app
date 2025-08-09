@@ -1,36 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
-class TeacherInfoModel {
+class TeacherModel {
   String? id;
   String? fullName;
   String? schoolName;
   String? imageUrl;
   Timestamp? createdAt;
+  Timestamp? updatedAt;
 
-  TeacherInfoModel({
+  TeacherModel({
     this.id,
     this.fullName,
     this.schoolName,
     this.imageUrl,
     this.createdAt,
+    this.updatedAt,
   });
 
-  factory TeacherInfoModel.fromFireStore(Map<String, dynamic> json, String docId) {
-    return TeacherInfoModel(
+  factory TeacherModel.fromFireStore(Map<String, dynamic> json, String docId) {
+    return TeacherModel(
       id: docId,
       fullName: json['fullName'],
       schoolName: json['schoolName'],
       imageUrl: json['imageUrl'],
       createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
     );
   }
 
   // 👉 static data
-  factory TeacherInfoModel.defaultData() {
-    return TeacherInfoModel(
+  factory TeacherModel.defaultData() {
+    return TeacherModel(
       id: null,
-      fullName: 'John Doe',
-      schoolName: 'Bangladesh Navy School & College',
+      fullName: 'john_doe'.tr,
+      schoolName: 'abc_school'.tr,
       imageUrl: null,
       createdAt: null,
     );

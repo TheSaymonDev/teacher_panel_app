@@ -7,7 +7,7 @@ class ClassDetailsBinding implements Bindings {
   @override
   void dependencies() {
     Get.lazyPut(() => StudentsInfoController());
-    Get.lazyPut(() => UpsertSubjectController());
     Get.lazyPut(() => ClassDetailsController());
+    Get.put(UpsertSubjectController());
   }
 }

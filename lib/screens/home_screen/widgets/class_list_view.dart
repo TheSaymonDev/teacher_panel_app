@@ -57,19 +57,19 @@ class ClassListView extends StatelessWidget {
     return GetBuilder<ManageClassController>(
       builder: (controller) => controller.isLoading
           ? AppConstFunctions.customCircularProgressIndicator
-          : controller.classes.isEmpty
+          : controller.classesData.isEmpty
               ? CustomEmptyWidget(title: 'no_class_added'.tr)
               : ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.classes.length,
+                  itemCount: controller.classesData.length,
                   itemBuilder: (context, index) {
-                    final classItem = controller.classes[index];
+                    final classItem = controller.classesData[index];
                     return CustomListTile(
                       onTap: () => Get.toNamed(AppRoutes.classDetailsScreen,
                           arguments: {'classData': classItem}),
                       title: classItem.className ?? '',
-                      subTitle: 'total_student ${classItem.numOfStudents}'.tr,
+                      subTitle: '${'total_student'.tr} ${classItem.numOfStudents}',
                       trailing: CustomPopUpMenu(
                         onUpdate: () => _showUpsertClassBox(context, classItem),
                         onDelete: () => _showClassDeleteConfirmationDialog(

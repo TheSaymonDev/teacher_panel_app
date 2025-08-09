@@ -1,11 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:teacher_panel/core/utils/app_urls.dart';
 import 'package:teacher_panel/screens/leaderboard_screen/controllers/leaderboard_controller.dart';
 import 'package:teacher_panel/core/utils/app_colors.dart';
 import 'package:teacher_panel/core/utils/app_const_functions.dart';
-
 
 class LeaderboardWidget extends StatelessWidget {
   const LeaderboardWidget({super.key});
@@ -31,7 +32,7 @@ class LeaderboardWidget extends StatelessWidget {
                   // 🥈 Rank 2 (left)
                   _buildLeaderItem(
                     rank: 2,
-                    image: 'https://i.pravatar.cc/150?img=4',
+                    image: topUsers[1].imageUrl,
                     userName: topUsers[1].username,
                     score: topUsers[1].totalScore.toString(),
                     context: context,
@@ -39,7 +40,7 @@ class LeaderboardWidget extends StatelessWidget {
                   // 🥇 Rank 1 (center)
                   _buildLeaderItem(
                     rank: 1,
-                    image: 'https://i.pravatar.cc/150?img=4',
+                    image: topUsers[0].imageUrl,
                     userName: topUsers[0].username,
                     score: topUsers[0].totalScore.toString(),
                     context: context,
@@ -48,7 +49,7 @@ class LeaderboardWidget extends StatelessWidget {
                   // 🥉 Rank 3 (right)
                   _buildLeaderItem(
                     rank: 3,
-                    image: 'https://i.pravatar.cc/150?img=4',
+                    image: topUsers[2].imageUrl,
                     userName: topUsers[2].username,
                     score: topUsers[2].totalScore.toString(),
                     context: context,
@@ -63,7 +64,7 @@ class LeaderboardWidget extends StatelessWidget {
                     itemCount: otherUsers.length,
                     itemBuilder: (context, index) => _buildRankListItem(
                       rank: index + 4,
-                      image: 'https://i.pravatar.cc/150?img=4',
+                      image: otherUsers[index].imageUrl,
                       userName: otherUsers[index].username,
                       score: otherUsers[index].totalScore.toString(),
                       context: context,
@@ -117,7 +118,11 @@ class LeaderboardWidget extends StatelessWidget {
             ),
           ),
           Gap(4.h),
-          Text(userName, style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center,),
+          Text(
+            userName,
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
           Text(score,
               style: Theme.of(context)
                   .textTheme
@@ -149,7 +154,12 @@ class LeaderboardWidget extends StatelessWidget {
                   .copyWith(color: AppColors.primaryClr),
             ),
             Gap(20.w),
-            CircleAvatar(radius: 25.r, backgroundImage: NetworkImage(image)),
+            CircleAvatar(
+              radius: 25.r,
+              backgroundImage: (image.isEmpty)
+                  ? AssetImage(AppUrls.demoProfile) as ImageProvider
+                  : MemoryImage(base64Decode(image)),
+            ),
             Gap(20.w),
             Expanded(
               child:

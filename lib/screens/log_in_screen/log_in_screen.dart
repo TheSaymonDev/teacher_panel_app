@@ -81,7 +81,7 @@ class LogInScreen extends StatelessWidget {
    if(controller.formKey.currentState!.validate()){
      final result = await controller.logInUser();
      if(result){
-       Get.toNamed(AppRoutes.homeScreen);
+       Get.offAllNamed(AppRoutes.homeScreen);
      }
    }
   }

@@ -5,7 +5,7 @@ import 'package:teacher_panel/core/utils/app_const_functions.dart';
 
 class ManageClassController extends GetxController {
   bool isLoading = false;
-  List<ClassModel> classes = [];
+  List<ClassModel> classesData = [];
 
   int totalClasses = 0;
   int totalSubjects = 0;
@@ -30,11 +30,11 @@ class ManageClassController extends GetxController {
       totalClasses = classDocs.length;
       totalSubjects = 0;
       totalStudents = 0;
-      classes = [];
+      classesData = [];
 
       for (final doc in classDocs) {
         final classModel = ClassModel.fromFireStore(doc.data(), doc.id);
-        classes.add(classModel);
+        classesData.add(classModel);
 
         // Count students
         final studentCount =

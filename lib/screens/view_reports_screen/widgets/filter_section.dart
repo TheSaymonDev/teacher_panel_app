@@ -29,7 +29,7 @@ class FilterSection extends StatelessWidget {
                       validator: (value) => value == null || value.isEmpty
                           ? 'class_required'.tr
                           : null,
-                      items: controller.classes
+                      items: controller.classesData
                           .map((cls) => DropdownMenuItem<String>(
                                 value: cls.className,
                                 child: Text(cls.className ?? ''),
@@ -59,7 +59,7 @@ class FilterSection extends StatelessWidget {
                       validator: (value) => value == null || value.isEmpty
                           ? 'subject_required'.tr
                           : null,
-                      items: controller.subjects
+                      items: controller.subjectsData
                           .map((sub) => DropdownMenuItem<String>(
                                 value: sub.subjectName,
                                 child: Text(sub.subjectName ?? ''),

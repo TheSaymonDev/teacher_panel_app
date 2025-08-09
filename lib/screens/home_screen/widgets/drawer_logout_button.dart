@@ -33,7 +33,7 @@ class DrawerLogoutButton extends StatelessWidget {
             Icon(CupertinoIcons.power, color: AppColors.secondaryClr),
             Gap(8.w),
             Text(
-              'Logout',
+              'logout'.tr,
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color: AppColors.secondaryClr,
               ),
