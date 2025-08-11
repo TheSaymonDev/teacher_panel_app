@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teacher_panel/core/utils/app_const_functions.dart';
+import 'package:teacher_panel/core/utils/app_logger.dart';
 import 'package:teacher_panel/data/services/firebase_service.dart';
 import 'package:teacher_panel/data/services/hive_service.dart';
 import 'package:teacher_panel/data/services/notification_service.dart';
@@ -103,6 +104,9 @@ class CreateQuizController extends GetxController {
     if (topicNameController.text.trim().isEmpty) {
       return 'Topic name cannot be empty.';
     }
+    if(endTimeController.text.isEmpty){
+      return 'Exam end time cannot be empty.';
+    }
     if (questions.length < 5) {
       return 'Minimum 5 questions are required to publish.';
     }
@@ -115,9 +119,10 @@ class CreateQuizController extends GetxController {
         .doc(_subjectDetailsController.classId)
         .collection('users')
         .get();
-
+AppLogger.logDebug(_subjectDetailsController.classId);
     for (final doc in studentsSnapshot.docs) {
       final token = doc.data()['fcmToken'];
+      AppLogger.logInfo(token);
       if (token != null && token.toString().isNotEmpty) {
         await NotificationService().sendFcmHttpV1Notification(
           fcmToken: token,

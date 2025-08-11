@@ -58,8 +58,8 @@ final Map<String, String> bnBd = {
     'no_subject_wise_performance': 'কোন বিষয়ভিত্তিক পারফরম্যান্স নেই',
 
     /// for create quiz screen
-    'questions': 'প্রশ্নসমূহ',
-    'publish': 'প্রকাশ করুন',
+    'create_mcq_questions': 'MCQ প্রশ্ন তৈরি',
+    'publish': 'প্রকাশ',
     'confirm_publish': 'প্রকাশ নিশ্চিত করুন',
     'confirm_publish_message': 'আপনি কি নিশ্চিত যে আপনি এই কুইজটি প্রকাশ করতে চান?',
     'confirm': 'নিশ্চিত করুন',
@@ -71,7 +71,7 @@ final Map<String, String> bnBd = {
     'topic_name': 'টপিকের নাম',
     'time': 'সময়',
     'minutes': 'মিনিট',
-    'select_end_time': 'শেষ সময় নির্বাচন করুন',
+    'select_exam_end_time': 'পরীক্ষার শেষ সময় নির্বাচন করুন',
     'add_question': 'প্রশ্ন যোগ করুন',
     'update_question': 'প্রশ্ন আপডেট করুন',
     'question': 'প্রশ্ন',

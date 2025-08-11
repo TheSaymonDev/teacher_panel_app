@@ -48,7 +48,7 @@ class QuizMetaForm extends StatelessWidget {
               GetBuilder<CreateQuizController>(
                 builder: (_) => CustomTextFormField(
                   controller: controller.endTimeController,
-                  hintText: 'select_end_time'.tr,
+                  hintText: 'select_exam_end_time'.tr,
                   readOnly: true,
                   validator: AppValidators.requiredValidator,
                   suffixIcon: IconButton(

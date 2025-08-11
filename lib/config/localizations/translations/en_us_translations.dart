@@ -55,7 +55,7 @@ final Map<String, String> enUs = {
   'total_quizzes_taken': 'Total Quizzes Taken',
   'no_subject_wise_performance': 'No subject-wise performance',
   /// for create quiz screen
-  'questions': 'Questions',
+  'create_mcq_questions': 'Create MCQ Questions',
   'publish': 'Publish',
   'confirm_publish': 'Confirm Publish',
   'confirm_publish_message': 'Are you sure you want to publish this quiz?',
@@ -68,7 +68,7 @@ final Map<String, String> enUs = {
   'topic_name': 'Topic Name',
   'time': 'Time',
   'minutes': 'minutes',
-  'select_end_time': 'Select End Time',
+  'select_exam_end_time': 'Select Exam End Time',
   'add_question': 'Add Question',
   'update_question': 'Update Question',
   'question': 'Question',

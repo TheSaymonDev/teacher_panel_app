@@ -38,7 +38,7 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBarWithTitle(
-        title: 'questions'.tr,
+        title: 'create_mcq_questions'.tr,
         onPressed: () => Get.back(),
         actions: [_buildPublishButton(), Gap(12.w)],
       ),
@@ -70,8 +70,11 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
         return OutlinedButton(
           onPressed: isEnabled ? _showPublishDialog : null,
           style: OutlinedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            minimumSize: Size(80.w, 40.h),
             side: BorderSide(
-                color: isEnabled ? AppColors.primaryClr : Colors.grey),
+                color: isEnabled ? AppColors.primaryClr : Colors.grey,
+                width: 3.w),
           ),
           child: Text('publish'.tr,
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
@@ -85,15 +88,15 @@ class _CreateQuizScreenState extends State<CreateQuizScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title:  Text('confirm_publish'.tr),
-        content:  Text('confirm_publish_message'.tr),
+        title: Text('confirm_publish'.tr),
+        content: Text('confirm_publish_message'.tr),
         actions: [
-          TextButton(onPressed: Get.back, child:  Text('cancel'.tr)),
+          TextButton(onPressed: Get.back, child: Text('cancel'.tr)),
           ElevatedButton(
             onPressed: () async {
               final result = await _createQuizController.createQuiz();
               if (result && mounted) {
-                Get.close(2); // Close alert & screen
+                Get.close(2);
                 HiveService().clearAllData();
               }
             },
